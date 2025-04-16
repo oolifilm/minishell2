@@ -6,7 +6,7 @@
 /*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 11:48:46 by jbanchon          #+#    #+#             */
-/*   Updated: 2025/04/15 18:22:14 by jbanchon         ###   ########.fr       */
+/*   Updated: 2025/04/16 12:13:50 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,17 +63,27 @@ int	exec_pipe(t_shell *sh, t_token *token, char *input)
 	pid_t	pid_left;
 	pid_t	pid_right;
 	t_token	*cmd_right;
+	t_token	*left_cmd_token;
+	t_token	*pipe_token;
+	t_token	*tmp;
 
-	while (token && token->type != PIPE)
-		token = token->next;
-	if (!token)
+	left_cmd_token = token;
+	pipe_token = token;
+	while (pipe_token && pipe_token->type != PIPE)
+		pipe_token = pipe_token->next;
+	if (!pipe_token)
 		return (1);
-	cmd_right = get_next_cmd(token->next);
+	cmd_right = get_next_cmd(pipe_token->next);
 	if (!cmd_right)
-		return (fprintf(stderr, "[ERROR] No command after pipe.\n"), 1);
+		return (printf("[ERROR] No command after pipe.\n"), 1);
+	tmp = token;
+	while (tmp && tmp->next != pipe_token)
+		tmp = tmp->next;
+	if (tmp)
+		tmp->next = NULL;
 	if (pipe(fd) < 0)
 		return (perror("minishell"), 1);
-	pid_left = left_cmd(sh, token, input, fd);
+	pid_left = left_cmd(sh, left_cmd_token, input, fd);
 	if (pid_left < 0)
 	{
 		close(fd[0]);

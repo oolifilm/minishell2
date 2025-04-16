@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: leaugust <leaugust@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/11 21:30:30 by julien            #+#    #+#             */
-/*   Updated: 2025/04/14 20:00:29 by leaugust         ###   ########.fr       */
+/*   Updated: 2025/04/16 12:27:46 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,6 +88,15 @@ int	handle_redirect(t_token *token, char *input)
 		else if (cur->type == REDIR_OUT)
 		{
 			fd = open(cur->next->input, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+			if (fd < 0)
+				return (perror("minishell"), 1);
+			if (dup2(fd, STDOUT_FILENO) < 0)
+				return (perror("minishell"), close(fd), 1);
+			close(fd);
+		}
+		else if (cur->type == APPEND)
+		{
+			fd = open(cur->next->input, O_WRONLY | O_CREAT | O_APPEND, 0644);
 			if (fd < 0)
 				return (perror("minishell"), 1);
 			if (dup2(fd, STDOUT_FILENO) < 0)

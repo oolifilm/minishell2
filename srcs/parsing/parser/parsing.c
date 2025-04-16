@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: leaugust <leaugust@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/10 15:27:16 by leaugust          #+#    #+#             */
-/*   Updated: 2025/04/15 16:05:43 by leaugust         ###   ########.fr       */
+/*   Updated: 2025/04/16 11:25:17 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,14 +48,8 @@ int	handle_pipes(t_token *tokens)
 				printf("[ERROR] Found consecutive pipes.\n");
 				return (1);
 			}
-			if (tokens->next->type == CMD)
-			{
-				if (!is_builtin(tokens->next->input)) //pb pour autre que builtin ex : cat -e
-				{
-					printf("[ERROR] Following command is not valid.\n");
-					return (1);
-				}
-			}
+			if (tokens->next->type != CMD)
+				return(printf("[ERROR] Pipe must be followed by a command.\n"), 1);
 		}
 		tokens = tokens->next;
 	}

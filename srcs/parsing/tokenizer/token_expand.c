@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   token_expand.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: leaugust <leaugust@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/11 16:45:07 by jbanchon          #+#    #+#             */
-/*   Updated: 2025/04/14 20:01:46 by leaugust         ###   ########.fr       */
+/*   Updated: 2025/04/16 13:07:04 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,6 @@ char	*expand_token(t_token *token)
 	else if (token->type == ENV)
 	{
 		value = getenv(token->input);
-		printf("[EXPAND] ENV %s = %s\n", token->input,
-			value ? value : "(null)");
 		if (value)
 			return (ft_strdup(value));
 		else

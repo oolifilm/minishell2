@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: leaugust <leaugust@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/28 11:35:29 by julien            #+#    #+#             */
-/*   Updated: 2025/04/15 14:35:26 by leaugust         ###   ########.fr       */
+/*   Updated: 2025/04/16 12:41:27 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,10 +109,13 @@ int	main(int argc, char **argv, char **envp)
 	{
 		prompt = "minishell$> ";
 		input = readline(prompt);
-		if (!input)
-			handle_eof();
-		add_history(input);
 		tokens_list = tokenize_input(input);
+		if (!input)
+		{
+			free_tokens(tokens_list);
+			handle_eof();
+		}
+		add_history(input);
 		if (tokens_list && tokens_list->head)
 		{
 			if (!parse_tokens(tokens_list))

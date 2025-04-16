@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   token_operators.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: leaugust <leaugust@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 10:59:25 by julien            #+#    #+#             */
-/*   Updated: 2025/04/14 20:04:12 by leaugust         ###   ########.fr       */
+/*   Updated: 2025/04/16 13:15:24 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,9 @@ void	assign_dollar(char *input, int *i, t_token_list *tokens)
 		(*i)++;
 	}
 	var_name[j] = '\0';
-	if (j > 0)
+	if (j == 0)
+		add_token(tokens, "$", STRING, 0);
+	else
 		add_token(tokens, var_name, ENV, 0);
 }
 
