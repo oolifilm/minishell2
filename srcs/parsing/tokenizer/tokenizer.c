@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: leaugust <leaugust@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 17:46:05 by jbanchon          #+#    #+#             */
-/*   Updated: 2025/04/15 15:41:45 by leaugust         ###   ########.fr       */
+/*   Updated: 2025/04/16 13:30:47 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,7 @@
 
 int	is_ignored_char(char c)
 {
-	return (c == ' ' || c == '\t' || c == '\n' || c == ':' || c == '!'
-		|| c == ';' || c == '@');
+	return (c == ' ' || c == '\t' || c == '\n' || c == ':' || c == '!');
 }
 
 int	is_ignorable_input(const char *line)
