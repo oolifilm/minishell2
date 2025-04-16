@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
+/*   By: julien <julien@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 17:46:05 by jbanchon          #+#    #+#             */
-/*   Updated: 2025/04/16 13:30:47 by jbanchon         ###   ########.fr       */
+/*   Updated: 2025/04/17 00:49:54 by julien           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,32 +66,99 @@ static void	process_tokens(char *input, t_token_list *tokens, int *i,
 		int *is_first_word)
 {
 	size_t	len;
+	char	buffer[1024];
+	int		buffer_len;
+	int		in_quotes;
+	char	quote_type;
 
 	len = ft_strlen(input);
+	buffer_len = 0;
+	in_quotes = 0;
+	quote_type = 0;
+	buffer[0] = '\0';
+	(void)is_first_word;
+
 	while (*i < (int)len)
 	{
+		if (in_quotes)
+		{
+			if (input[*i] == quote_type)
+			{
+				in_quotes = 0;
+				quote_type = 0;
+			}
+			buffer[buffer_len++] = input[*i];
+			(*i)++;
+			continue;
+		}
+		if (input[*i] == '\'' || input[*i] == '"')
+		{
+			in_quotes = 1;
+			quote_type = input[*i];
+			buffer[buffer_len++] = input[*i];
+			(*i)++;
+			continue;
+		}
 		if (input[*i] == '$')
+		{
+			if (buffer_len > 0)
+			{
+				buffer[buffer_len] = '\0';
+				add_token(tokens, ft_strdup(buffer), STRING, 1);
+				buffer_len = 0;
+			}
 			assign_dollar(input, i, tokens);
+		}
 		else if (input[*i] == '|')
 		{
+			if (buffer_len > 0)
+			{
+				buffer[buffer_len] = '\0';
+				add_token(tokens, ft_strdup(buffer), STRING, 1);
+				buffer_len = 0;
+			}
 			assign_pipe(input[*i], tokens);
 			(*i)++;
 		}
 		else if (input[*i] == '<' || input[*i] == '>')
+		{
+			if (buffer_len > 0)
+			{
+				buffer[buffer_len] = '\0';
+				add_token(tokens, ft_strdup(buffer), STRING, 1);
+				buffer_len = 0;
+			}
 			assign_redirection(input, i, tokens);
-		else if (input[*i] == '\'' || input[*i] == '"')
-			handle_quoted_content(input, i, tokens, input[*i]);
+		}
+		else if (ft_isspace(input[*i]))
+		{
+			if (buffer_len > 0)
+			{
+				buffer[buffer_len] = '\0';
+				char *processed = remove_quotes(buffer);
+				add_token(tokens, processed, STRING, 1);
+				buffer_len = 0;
+			}
+			skip_spaces(input, i);
+		}
 		else
 		{
-			token_is_command(input, i, tokens, is_first_word);
+			buffer[buffer_len++] = input[*i];
 			(*i)++;
 		}
+	}
+	if (buffer_len > 0)
+	{
+		buffer[buffer_len] = '\0';
+		char *processed = remove_quotes(buffer);
+		add_token(tokens, processed, STRING, 1);
 	}
 }
 
 void	assign_cmd_types(t_token *token)
 {
-	int	expecting_cmd;
+	int		expecting_cmd;
+	char	*cleaned_cmd;
 
 	expecting_cmd = 1;
 	while (token)
@@ -102,6 +169,12 @@ void	assign_cmd_types(t_token *token)
 				|| token->type == DOLLAR))
 		{
 			token->type = CMD;
+			cleaned_cmd = remove_quotes(token->input);
+			if (cleaned_cmd)
+			{
+				free(token->input);
+				token->input = cleaned_cmd;
+			}
 			expecting_cmd = 0;
 		}
 		else if (token->type == CMD || token->type == ARG)

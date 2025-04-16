@@ -12,7 +12,7 @@
 
 #include "../../../include/minishell.h"
 
-int	exec_builtin_cmd(t_token *token, char *input)
+int	exec_builtin_cmd(t_shell *sh, t_token *token, char *input)
 {
 	char	**argv;
 	char	*cmd;
@@ -34,19 +34,19 @@ int	exec_builtin_cmd(t_token *token, char *input)
 	else if (ft_strcmp(cmd, "cd") == 0)
 		ft_cd(argv);
 	else if (ft_strcmp(cmd, "export") == 0)
-		ft_export(argv);
+		ft_export(sh, argv);
 	else if (ft_strcmp(cmd, "env") == 0)
-		ft_env(argv);
+		ft_env(sh, argv);
 	else if (ft_strcmp(cmd, "pwd") == 0)
 		ft_pwd(argv);
 	else if (ft_strcmp(cmd, "unset") == 0)
-		ft_unset(argv);
+		ft_unset(sh, argv);
 	free(cmd);
 	ft_free_split(argv);
 	return (0);
 }
 
-int	exec_builtin_redirect(t_token *token, char *input)
+int	exec_builtin_redirect(t_shell *sh, t_token *token, char *input)
 {
 	pid_t	pid;
 
@@ -55,7 +55,7 @@ int	exec_builtin_redirect(t_token *token, char *input)
 	{
 		if (handle_redirect(token, input) == -1)
 			exit(1);
-		exec_builtin_cmd(token, input);
+		exec_builtin_cmd(sh, token, input);
 		exit(0);
 	}
 	else if (pid > 0)
@@ -118,9 +118,9 @@ void	exec_cmd(t_shell *sh, t_token *token, char *input)
 	if (is_builtin(token->input))
 	{
 		if (has_redirect(token))
-			exec_builtin_redirect(token, input);
+			exec_builtin_redirect(sh, token, input);
 		else
-			exec_builtin_cmd(token, input);
+			exec_builtin_cmd(sh, token, input);
 		return ;
 	}
 	argv = build_argv(token);

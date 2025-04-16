@@ -12,18 +12,16 @@
 
 #include "../../include/minishell.h"
 
-extern char	**g_env;
-
 /*
 Sujet : env with no options
 ======
-Commande env : afficher toutes les variables d'g_envnement
+Commande env : afficher toutes les variables d'environnement
 Utilisation : env
 ======
-envp = tableau qui contient toutes les variables d'g_envnement
+envp = tableau qui contient toutes les variables d'environnement
 */
 
-int	ft_env(char **argv)
+int	ft_env(t_shell *sh, char **argv)
 {
 	int	i;
 
@@ -33,9 +31,9 @@ int	ft_env(char **argv)
 		printf("[ERROR] env: no options\n");
 		return (1);
 	}
-	while (g_env[i])
+	while (sh->env[i])
 	{
-		printf("%s\n", g_env[i]);
+		printf("%s\n", sh->env[i]);
 		i++;
 	}
 	return (0);

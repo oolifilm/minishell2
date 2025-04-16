@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
+/*   By: julien <julien@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 14:11:12 by leaugust          #+#    #+#             */
-/*   Updated: 2025/04/16 11:42:38 by jbanchon         ###   ########.fr       */
+/*   Updated: 2025/04/17 00:04:05 by julien           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,13 +14,13 @@
 # define MINISHELL_H
 
 # include "../libft/libft.h"
+# include <stdio.h>
 # include <errno.h>
 # include <fcntl.h>
 # include <readline/history.h>
 # include <readline/readline.h>
 # include <signal.h>
 # include <stdbool.h>
-# include <stdio.h>
 # include <stdlib.h>
 # include <string.h>
 # include <sys/wait.h>
@@ -152,13 +152,13 @@ int					is_ignored_char(char c);
 
 char				**build_argv(t_token *token);
 char				**fill_argv(t_token *token, char **argv);
-int					exec_builtin_cmd(t_token *token, char *input);
+int					exec_builtin_cmd(t_shell *sh, t_token *token, char *input);
 void				exec_cmd(t_shell *sh, t_token *token, char *input);
 int					exec_ext_cmd(t_shell *sh, t_token *token, char **argv);
 int					run_ext_child(t_shell *sh, t_token *token, char *path,
 						char **argv);
 int					handle_execve_err(char *path, char **argv);
-int					exec_builtin_redirect(t_token *token, char *input);
+int					exec_builtin_redirect(t_shell *sh, t_token *token, char *input);
 int					handle_redirect(t_token *token, char *input);
 int					has_redirect(t_token *token);
 int					ft_free_split(char **tab);
@@ -182,7 +182,7 @@ int					ft_echo_is_command(t_token_list *tokens);
 
 /*=====FT_ENV=====*/
 
-int					ft_env(char **envp);
+int					ft_env(t_shell *sh, char **argv);
 int					ft_env_is_command(t_token_list *tokens);
 
 /*=====FT_EXIT=====*/
@@ -192,7 +192,7 @@ int					ft_exit(char **argv);
 /*=====FT_EXPORT=====*/
 
 int					add_env(char *var);
-int					ft_export(char **argv);
+int					ft_export(t_shell *sh, char **argv);
 char				**init_env(char **envp);
 
 /*=====FT_PWD=====*/
@@ -201,7 +201,7 @@ int					ft_pwd(char **argv);
 
 /*=====FT_UNSET=====*/
 
-int					ft_unset(char **argv);
+int					ft_unset(t_shell *sh, char **argv);
 int					ft_unset_is_command(t_token_list *tokens);
 
 /*=====BUILTIN_UTILS=====*/
@@ -209,7 +209,7 @@ int					ft_unset_is_command(t_token_list *tokens);
 int					is_valid_env_var(const char *var);
 void				print_env_var(char *var);
 int					compare_vars(const void *a, const void *b);
-int					print_sorted_env(void);
+int					print_sorted_env(t_shell *sh);
 
 /*=====SIGNALS=====*/
 

@@ -7,7 +7,7 @@ MINISHELL TODO LIST
    ✅ Parsing des pipes (|)
    ✅ Expansion des variables ($VAR)
    ✅ Structure de tokenisation améliorée (t_token_list)
-   ☐ Gestion du $?
+   ☐ Gestion du $? (code de retour)
    ☐ Tests exhaustifs du parsing
    ☐ Gestion des erreurs de syntaxe supplémentaires (||, &&)
 
@@ -18,6 +18,7 @@ MINISHELL TODO LIST
    ✅ Gestion des processus (wait)
    ☐ Gestion des codes de retour ($?)
    ☐ Gestion des erreurs d'exécution complète
+   ☐ Gestion des erreurs POSIX (conformité avec bash)
 
 3. BUILT-INS [Priorité: HAUTE]
    ✅ echo (avec option -n)
@@ -39,22 +40,25 @@ MINISHELL TODO LIST
    ✅ Structure de base pour heredoc (<<)
    ☐ Implémentation complète du heredoc
       - ✅ Lecture jusqu'au délimiteur
-      - ☐ Gestion des variables dans heredoc
+      - ☐ Gestion des variables dans heredoc (expansion selon bash POSIX)
       - ☐ Stockage temporaire du contenu
    ☐ Gestion des erreurs de redirection (fichiers inexistants, permissions)
+   ☐ Vérification de la conformité POSIX pour les redirections
 
 5. PIPES [Priorité: HAUTE]
    ✅ Parsing des pipes
-   ☐ Création des pipes
-   ☐ Redirection entrée/sortie entre processus
-   ☐ Gestion des processus multiples
+   ✅ Création des pipes
+   ✅ Redirection entrée/sortie entre processus
+   ☐ Gestion des pipes multiples (a | b | c | d)
    ☐ Gestion des erreurs de pipe
+   ☐ Gestion des codes de retour dans les pipes (selon bash POSIX)
 
 6. GESTION DES SIGNAUX [Priorité: MOYENNE]
-   ☐ ctrl-C (nouveau prompt)
-   ☐ ctrl-D (quitter)
-   ☐ ctrl-\ (rien faire)
+   ☐ ctrl-C (SIGINT) - nouveau prompt (partiellement implémenté)
+   ☐ ctrl-D (EOF) - quitter (partiellement implémenté)
+   ☐ ctrl-\ (SIGQUIT) - rien faire (partiellement implémenté)
    ☐ Gestion des signaux dans les processus enfants
+   ☐ Comportement conforme à bash POSIX pour les signaux
 
 7. NETTOYAGE ET OPTIMISATION [Priorité: MOYENNE]
    ✅ Structure de code améliorée
@@ -63,6 +67,15 @@ MINISHELL TODO LIST
    ☐ Tests exhaustifs
    ☐ Gestion des cas limites
    ☐ Optimisation des performances
+   ☐ Vérification de la conformité POSIX
+
+8. COMPORTEMENTS POSIX SPÉCIFIQUES [Priorité: HAUTE]
+   ☐ Gestion correcte des guillemets selon POSIX
+   ☐ Expansion des variables selon les règles POSIX
+   ☐ Gestion des codes de retour selon POSIX
+   ☐ Comportement des redirections selon POSIX
+   ☐ Comportement des pipes selon POSIX
+   ☐ Gestion des erreurs selon POSIX
 
 NOTES:
 - Les tâches sont organisées par dépendances (les premières sont nécessaires pour les suivantes)
@@ -70,7 +83,7 @@ NOTES:
 - Priorité MOYENNE = Fonctionnalités importantes mais qui dépendent des bases
 - Priorité BASSE = Peut être fait en dernier
 
-PROGRESSION ACTUELLE : ~70%
+PROGRESSION ACTUELLE : ~75%
 - ✅ Parsing basique des commandes
 - ✅ Gestion des quotes simples/doubles
 - ✅ Historique des commandes
@@ -83,10 +96,14 @@ PROGRESSION ACTUELLE : ~70%
 - ✅ Built-in export complet et optimisé
 - ✅ Gestion basique des processus avec wait
 - ✅ Tous les built-ins implémentés (echo, pwd, env, cd, exit, export, unset)
+- ✅ Implémentation basique des pipes (un seul pipe)
+- ✅ Gestion basique des signaux
 
 PROCHAINES PRIORITÉS :
-1. Finaliser la gestion des heredocs et redirections
-2. Implémenter la gestion des pipes multiples
-3. Gestion des codes de retour ($?)
-4. Gestion des signaux (ctrl-C, ctrl-D, ctrl-\)
-5. Tests exhaustifs et gestion des cas limites
+1. Finaliser la gestion des heredocs (<<) avec expansion de variables selon POSIX
+2. Implémenter la gestion des pipes multiples (a | b | c | d)
+3. Gestion des codes de retour ($?) selon les spécifications POSIX
+4. Améliorer la gestion des signaux (ctrl-C, ctrl-D, ctrl-\) selon POSIX
+5. Vérifier la conformité POSIX pour toutes les fonctionnalités
+6. Tests exhaustifs et gestion des cas limites
+7. Correction des fuites mémoire

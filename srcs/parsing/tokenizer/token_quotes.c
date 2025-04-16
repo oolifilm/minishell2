@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   token_quotes.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: leaugust <leaugust@student.42.fr>          +#+  +:+       +#+        */
+/*   By: julien <julien@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 11:00:31 by julien            #+#    #+#             */
-/*   Updated: 2025/04/15 18:19:52 by leaugust         ###   ########.fr       */
+/*   Updated: 2025/04/17 00:51:15 by julien           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,21 +19,31 @@ char	*remove_quotes(const char *s)
 	int		i;
 	int		j;
 	char	quote;
+	int		in_quote;
 
 	i = 0;
 	j = 0;
 	quote = 0;
-	res = malloc(ft_strlen(s) + 1);
+	in_quote = 0;
+	res = malloc(sizeof(char) * (ft_strlen(s) + 1));
 	if (!res)
 		return (NULL);
 	while (s[i])
 	{
 		if ((s[i] == '"' || s[i] == '\''))
 		{
-			if (!quote)
+			if (!in_quote)
+			{
+				in_quote = 1;
 				quote = s[i];
+			}
 			else if (quote == s[i])
+			{
+				in_quote = 0;
 				quote = 0;
+			}
+			else
+				res[j++] = s[i];
 			i++;
 		}
 		else

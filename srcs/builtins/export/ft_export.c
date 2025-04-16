@@ -12,14 +12,12 @@
 
 #include "../../../include/minishell.h"
 
-extern char		**g_env;
-
-static size_t	count_env(void)
+static size_t	count_env(char **env)
 {
 	size_t	i;
 
 	i = 0;
-	while (g_env[i])
+	while (env[i])
 		i++;
 	return (i);
 }
@@ -37,14 +35,14 @@ static void	free_env_arr(char **env, size_t n)
 	free(env);
 }
 
-static int	copy_env(char **new_env, size_t env_count)
+static int	copy_env(char **new_env, char **env, size_t env_count)
 {
 	size_t	i;
 
 	i = 0;
 	while (i < env_count)
 	{
-		new_env[i] = ft_strdup(g_env[i]);
+		new_env[i] = ft_strdup(env[i]);
 		if (!new_env[i])
 		{
 			free_env_arr(new_env, i);
@@ -55,16 +53,16 @@ static int	copy_env(char **new_env, size_t env_count)
 	return (0);
 }
 
-static int	add_var(const char *var)
+static int	add_var(t_shell *sh, const char *var)
 {
 	char	**new_env;
 	size_t	env_count;
 
-	env_count = count_env();
+	env_count = count_env(sh->env);
 	new_env = malloc(sizeof(char *) * (env_count + 2));
 	if (!new_env)
 		return (1);
-	if (copy_env(new_env, env_count))
+	if (copy_env(new_env, sh->env, env_count))
 		return (1);
 	new_env[env_count] = ft_strdup(var);
 	if (!new_env[env_count])
@@ -73,22 +71,23 @@ static int	add_var(const char *var)
 		return (1);
 	}
 	new_env[env_count + 1] = NULL;
-	g_env = new_env;
+	free_env_arr(sh->env, env_count);
+	sh->env = new_env;
 	return (0);
 }
 
-static int	replace_var(const char *var, size_t var_len)
+static int	replace_var(t_shell *sh, const char *var, size_t var_len)
 {
 	size_t	i;
 
 	i = 0;
-	while (g_env[i])
+	while (sh->env[i])
 	{
-		if (ft_strncmp(g_env[i], var, var_len) == 0 && g_env[i][var_len] == '=')
+		if (ft_strncmp(sh->env[i], var, var_len) == 0 && sh->env[i][var_len] == '=')
 		{
-			free(g_env[i]);
-			g_env[i] = ft_strdup(var);
-			if (!g_env[i])
+			free(sh->env[i]);
+			sh->env[i] = ft_strdup(var);
+			if (!sh->env[i])
 				return (1);
 			return (0);
 		}
@@ -97,7 +96,7 @@ static int	replace_var(const char *var, size_t var_len)
 	return (-1);
 }
 
-static int	process_var(const char *var)
+static int	process_var(t_shell *sh, const char *var)
 {
 	char	*equal_sign;
 	size_t	var_len;
@@ -113,23 +112,64 @@ static int	process_var(const char *var)
 	if (!equal_sign)
 		return (0);
 	var_len = equal_sign - var;
-	if (replace_var(var, var_len) != -1)
+	if (replace_var(sh, var, var_len) != -1)
 		return (0);
-	return (add_var(var));
+	return (add_var(sh, var));
 }
 
-int	ft_export(char **argv)
+int	print_sorted_env(t_shell *sh)
+{
+	char	**sorted_env;
+	size_t	env_count;
+	size_t	i;
+	size_t	j;
+	char	*temp;
+
+	env_count = count_env(sh->env);
+	sorted_env = malloc(sizeof(char *) * (env_count + 1));
+	if (!sorted_env)
+		return (1);
+	if (copy_env(sorted_env, sh->env, env_count))
+		return (1);
+	sorted_env[env_count] = NULL;
+	i = 0;
+	while (i < env_count - 1)
+	{
+		j = 0;
+		while (j < env_count - i - 1)
+		{
+			if (ft_strcmp(sorted_env[j], sorted_env[j + 1]) > 0)
+			{
+				temp = sorted_env[j];
+				sorted_env[j] = sorted_env[j + 1];
+				sorted_env[j + 1] = temp;
+			}
+			j++;
+		}
+		i++;
+	}
+	i = 0;
+	while (sorted_env[i])
+	{
+		printf("declare -x %s\n", sorted_env[i]);
+		i++;
+	}
+	free_env_arr(sorted_env, env_count);
+	return (0);
+}
+
+int	ft_export(t_shell *sh, char **argv)
 {
 	size_t	i;
 
 	if (!argv || !argv[0])
 		return (1);
 	if (!argv[1])
-		return (print_sorted_env());
+		return (print_sorted_env(sh));
 	i = 1;
 	while (argv[i])
 	{
-		if (process_var(argv[i]) != 0)
+		if (process_var(sh, argv[i]) != 0)
 			return (1);
 		i++;
 	}

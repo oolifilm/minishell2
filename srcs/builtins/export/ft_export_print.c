@@ -12,8 +12,6 @@
 
 #include "../../../include/minishell.h"
 
-extern char	**g_env; // Same ici, refaire export sans g_env
-
 static void	print_env_var_with_value(char *var, char *equal_sign)
 {
 	char	*var_name;
@@ -48,14 +46,15 @@ void	print_env_var(char *var)
 	}
 }
 
-static char	**create_sorted_env(void)
+/* Cette fonction n'est plus utilisée car print_sorted_env est maintenant dans ft_export.c
+static char	**create_sorted_env(t_shell *sh)
 {
 	char	**sorted_env;
 	size_t	env_count;
 	size_t	i;
 
 	env_count = 0;
-	while (g_env[env_count])
+	while (sh->env[env_count])
 		env_count++;
 	sorted_env = malloc(sizeof(char *) * (env_count + 1));
 	if (!sorted_env)
@@ -63,20 +62,23 @@ static char	**create_sorted_env(void)
 	i = 0;
 	while (i < env_count)
 	{
-		sorted_env[i] = g_env[i];
+		sorted_env[i] = sh->env[i];
 		i++;
 	}
 	sorted_env[env_count] = NULL;
-	qsort(sorted_env, env_count, sizeof(char *), compare_vars); // A changer faire une sorte de bubble short ?
+	qsort(sorted_env, env_count, sizeof(char *), compare_vars);
 	return (sorted_env);
 }
+*/
 
-int	print_sorted_env(void)
+/* Cette fonction est maintenant définie dans ft_export.c */
+/*
+int	print_sorted_env(t_shell *sh)
 {
 	char	**sorted_env;
 	size_t	i;
 
-	sorted_env = create_sorted_env();
+	sorted_env = create_sorted_env(sh);
 	if (!sorted_env)
 		return (1);
 	i = 0;
@@ -88,3 +90,4 @@ int	print_sorted_env(void)
 	free(sorted_env);
 	return (0);
 }
+*/
