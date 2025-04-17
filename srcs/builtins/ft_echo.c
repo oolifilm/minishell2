@@ -3,14 +3,27 @@
 /*                                                        :::      ::::::::   */
 /*   ft_echo.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
+/*   By: leaugust <leaugust@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/28 14:14:58 by jbanchon          #+#    #+#             */
-/*   Updated: 2025/04/10 15:06:50 by jbanchon         ###   ########.fr       */
+/*   Updated: 2025/04/17 11:58:34 by leaugust         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
+
+
+static int is_echo_option_n(char *str)
+{
+	int i;
+
+	i = 1;
+	if (!str || str[0] != '-' || str[1] != 'n')
+		return (0);
+	while (str[i] == 'n')
+		i++;
+	return (str[i] == '\0');
+}
 
 /*
 Ce qui nous est démandé dans le sujet : echo with option -n
@@ -32,7 +45,7 @@ int	ft_echo(char **argv)
 	else
 		i = 0;
 	newline = 1;
-	while (argv[i] && ft_strcmp(argv[i], "-n") == 0)
+	while (argv[i] && is_echo_option_n(argv[i]))
 	{
 		newline = 0;
 		i++;
