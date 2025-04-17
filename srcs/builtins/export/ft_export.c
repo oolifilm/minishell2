@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_export.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
+/*   By: leaugust <leaugust@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/28 14:16:14 by jbanchon          #+#    #+#             */
-/*   Updated: 2025/04/17 18:30:29 by jbanchon         ###   ########.fr       */
+/*   Updated: 2025/04/17 18:34:46 by leaugust         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -151,7 +151,7 @@ int	print_sorted_env(t_shell *sh)
 	i = 0;
 	while (sorted_env[i])
 	{
-		printf("declare -x %s\n", sorted_env[i]);
+		printf("export %s\n", sorted_env[i]);
 		i++;
 	}
 	free_env_arr(sorted_env, env_count);
