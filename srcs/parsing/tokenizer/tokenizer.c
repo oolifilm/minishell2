@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: julien <julien@student.42.fr>              +#+  +:+       +#+        */
+/*   By: leaugust <leaugust@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 17:46:05 by jbanchon          #+#    #+#             */
-/*   Updated: 2025/04/17 00:49:54 by julien           ###   ########.fr       */
+/*   Updated: 2025/04/17 12:37:22 by leaugust         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,7 @@ static void	process_tokens(char *input, t_token_list *tokens, int *i,
 	int		buffer_len;
 	int		in_quotes;
 	char	quote_type;
+	char	*processed;
 
 	len = ft_strlen(input);
 	buffer_len = 0;
@@ -77,7 +78,6 @@ static void	process_tokens(char *input, t_token_list *tokens, int *i,
 	quote_type = 0;
 	buffer[0] = '\0';
 	(void)is_first_word;
-
 	while (*i < (int)len)
 	{
 		if (in_quotes)
@@ -89,7 +89,7 @@ static void	process_tokens(char *input, t_token_list *tokens, int *i,
 			}
 			buffer[buffer_len++] = input[*i];
 			(*i)++;
-			continue;
+			continue ;
 		}
 		if (input[*i] == '\'' || input[*i] == '"')
 		{
@@ -97,7 +97,7 @@ static void	process_tokens(char *input, t_token_list *tokens, int *i,
 			quote_type = input[*i];
 			buffer[buffer_len++] = input[*i];
 			(*i)++;
-			continue;
+			continue ;
 		}
 		if (input[*i] == '$')
 		{
@@ -135,7 +135,7 @@ static void	process_tokens(char *input, t_token_list *tokens, int *i,
 			if (buffer_len > 0)
 			{
 				buffer[buffer_len] = '\0';
-				char *processed = remove_quotes(buffer);
+				processed = remove_quotes(buffer);
 				add_token(tokens, processed, STRING, 1);
 				buffer_len = 0;
 			}
@@ -143,14 +143,23 @@ static void	process_tokens(char *input, t_token_list *tokens, int *i,
 		}
 		else
 		{
-			buffer[buffer_len++] = input[*i];
-			(*i)++;
+			if (input[*i] == '\\' && input[*i + 1])
+			{
+				(*i)++;
+				buffer[buffer_len++] = input[*i];
+				(*i)++;
+			}
+			else
+			{
+				buffer[buffer_len++] = input[*i];
+				(*i)++;
+			}
 		}
 	}
 	if (buffer_len > 0)
 	{
 		buffer[buffer_len] = '\0';
-		char *processed = remove_quotes(buffer);
+		processed = remove_quotes(buffer);
 		add_token(tokens, processed, STRING, 1);
 	}
 }

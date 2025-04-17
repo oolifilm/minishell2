@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   token_quotes.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: julien <julien@student.42.fr>              +#+  +:+       +#+        */
+/*   By: leaugust <leaugust@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 11:00:31 by julien            #+#    #+#             */
-/*   Updated: 2025/04/17 00:51:15 by julien           ###   ########.fr       */
+/*   Updated: 2025/04/17 12:21:00 by leaugust         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,35 +19,29 @@ char	*remove_quotes(const char *s)
 	int		i;
 	int		j;
 	char	quote;
-	int		in_quote;
 
 	i = 0;
 	j = 0;
 	quote = 0;
-	in_quote = 0;
-	res = malloc(sizeof(char) * (ft_strlen(s) + 1));
+	res = malloc(ft_strlen(s) + 1);
 	if (!res)
 		return (NULL);
 	while (s[i])
 	{
-		if ((s[i] == '"' || s[i] == '\''))
+		if (s[i] == '"' || s[i] == '\'')
 		{
-			if (!in_quote)
-			{
-				in_quote = 1;
+			if (quote == 0)
 				quote = s[i];
-			}
 			else if (quote == s[i])
-			{
-				in_quote = 0;
 				quote = 0;
-			}
-			else
-				res[j++] = s[i];
 			i++;
 		}
 		else
-			res[j++] = s[i++];
+		{
+			res[j] = s[i];
+			j++;
+			i++;
+		}
 	}
 	res[j] = '\0';
 	return (res);
@@ -69,14 +63,25 @@ static void	handle_single_quote(char *input, int *i, t_token_list *tokens)
 	if (input[*i] == '\'')
 	{
 		while (start < *i && len < 1023)
-			buffer[len++] = input[start++];
+		{
+			buffer[len] = input[start];
+			len++;
+			start++;
+		}
 		(*i)++;
 		while (input[*i] && !ft_isspace(input[*i])
 			&& !is_token_breaker(input[*i]) && len < 1023)
-			buffer[len++] = input[(*i)++];
+		{
+			buffer[len] = input[*i];
+			len++;
+			(*i)++;
+		}
 		buffer[len] = '\0';
 		content = remove_quotes(buffer);
-		add_token(tokens, content ? content : ft_strdup(buffer), STRING, 1);
+		if (content)
+			add_token(tokens, content, STRING, 1);
+		else
+			add_token(tokens, ft_strdup(buffer), STRING, 1);
 		free(content);
 	}
 }
@@ -110,13 +115,18 @@ static void	handle_double_quotes(char *input, int *i, t_token_list *tokens)
 				free(expanded);
 				(*i)++;
 				while (input[*i] && !ft_isspace(input[*i])
-					&& !is_token_breaker(input[*i]))
-					buffer[len++] = input[(*i)++];
+					&& !is_token_breaker(input[*i]) && len < 1023)
+				{
+					buffer[len] = input[*i];
+					len++;
+					(*i)++;
+				}
 				buffer[len] = '\0';
 				final_content = remove_quotes(buffer);
-				add_token(tokens,
-					final_content ? final_content : ft_strdup(buffer), STRING,
-					1);
+				if (final_content)
+					add_token(tokens, final_content, STRING, 1);
+				else
+					add_token(tokens, ft_strdup(buffer), STRING, 1);
 				free(final_content);
 			}
 		}

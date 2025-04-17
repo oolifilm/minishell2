@@ -6,7 +6,7 @@
 /*   By: leaugust <leaugust@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/28 14:16:14 by jbanchon          #+#    #+#             */
-/*   Updated: 2025/04/14 19:59:53 by leaugust         ###   ########.fr       */
+/*   Updated: 2025/04/17 14:54:41 by leaugust         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,7 +105,7 @@ static int	process_var(t_shell *sh, const char *var)
 	{
 		write(2, "export: '", 9);
 		write(2, var, ft_strlen(var));
-		write(2, "': not a valid identifier\n", 25);
+		write(2, "': not a valid identifier\n", 26);
 		return (1);
 	}
 	equal_sign = ft_strchr(var, '=');
@@ -151,7 +151,7 @@ int	print_sorted_env(t_shell *sh)
 	i = 0;
 	while (sorted_env[i])
 	{
-		printf("declare -x %s\n", sorted_env[i]);
+		printf("export %s\n", sorted_env[i]);
 		i++;
 	}
 	free_env_arr(sorted_env, env_count);

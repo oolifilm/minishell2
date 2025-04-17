@@ -6,22 +6,22 @@
 /*   By: leaugust <leaugust@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 11:02:26 by julien            #+#    #+#             */
-/*   Updated: 2025/04/17 12:02:10 by leaugust         ###   ########.fr       */
+/*   Updated: 2025/04/17 12:34:40 by leaugust         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../../include/minishell.h"
 
-/* Détermine si un caractère est un caractère 
+/* Détermine si un caractère est un caractère
 spécial dans l'analyse de la commande. */
 
 static bool	is_special_char(char c)
 {
-	return (c == ' ' || c == '\t' || c == '\n' || c == '$'
-		|| c == '>' || c == '<' || c == '\'' || c == '\"');
+	return (c == ' ' || c == '\t' || c == '\n' || c == '$' || c == '>'
+		|| c == '<' || c == '\'' || c == '\"');
 }
 
-/* Extrait un mot de l'entrée `input` et le 
+/* Extrait un mot de l'entrée `input` et le
 classe en fonction de son rôle dans la commande. */
 
 void	token_is_command(char *input, int *i, t_token_list *tokens,
@@ -33,7 +33,13 @@ void	token_is_command(char *input, int *i, t_token_list *tokens,
 	j = 0;
 	while (input[*i] && !is_special_char(input[*i]))
 	{
-		temp[j++] = input[*i];
+		if (input[*i] == '\\' && input[*i + 1])
+		{
+			(*i)++;
+			temp[j++] = input[*i];
+		}
+		else
+			temp[j++] = input[*i];
 		(*i)++;
 	}
 	temp[j] = '\0';
@@ -53,7 +59,7 @@ void	token_is_command(char *input, int *i, t_token_list *tokens,
 	}
 }
 
-/* Extrait une variable d'environnement à partir 
+/* Extrait une variable d'environnement à partir
 de l'entrée input lorsqu'un $ est rencontré. */
 
 void	assign_env_var(char *input, int *i, t_token_list *tokens)
