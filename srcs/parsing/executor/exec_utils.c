@@ -6,7 +6,7 @@
 /*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/11 21:30:30 by julien            #+#    #+#             */
-/*   Updated: 2025/04/16 12:27:46 by jbanchon         ###   ########.fr       */
+/*   Updated: 2025/04/17 15:10:30 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ int	has_redirect(t_token *token)
 	return (0);
 }
 
-char	**fill_argv(t_token *token, char **argv)
+char	**fill_argv(t_shell *sh, t_token *token, char **argv)
 {
 	t_token	*cur;
 	int		i;
@@ -38,14 +38,14 @@ char	**fill_argv(t_token *token, char **argv)
 	{
 		if (cur->type == STRING || cur->type == ARG || cur->type == ENV
 			|| cur->type == EXIT)
-			argv[i++] = expand_token(cur);
+			argv[i++] = expand_token(sh, cur);
 		cur = cur->next;
 	}
 	argv[i] = NULL;
 	return (argv);
 }
 
-char	**build_argv(t_token *token)
+char	**build_argv(t_shell *sh, t_token *token)
 {
 	char	**argv;
 	int		count;
@@ -64,7 +64,7 @@ char	**build_argv(t_token *token)
 	if (!argv)
 		return (NULL);
 	argv[0] = ft_strdup(token->input);
-	return (fill_argv(token, argv));
+	return (fill_argv(sh, token, argv));
 }
 
 int	handle_redirect(t_token *token, char *input)

@@ -6,7 +6,7 @@
 /*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/10 15:27:16 by leaugust          #+#    #+#             */
-/*   Updated: 2025/04/16 11:25:17 by jbanchon         ###   ########.fr       */
+/*   Updated: 2025/04/17 18:15:59 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ int	handle_pipes(t_token *tokens)
 	{
 		if (tokens->type == STRING)
 		{
-			if (!tokens->quoted && ft_strchr(tokens->input, '|'))
+			if (!tokens->quote_state && ft_strchr(tokens->input, '|'))
 			{
 				printf("[ERROR] Pipe found in unquoted string.\n");
 				return (1);

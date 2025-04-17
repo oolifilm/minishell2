@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_export.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: leaugust <leaugust@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/28 14:16:14 by jbanchon          #+#    #+#             */
-/*   Updated: 2025/04/14 19:59:53 by leaugust         ###   ########.fr       */
+/*   Updated: 2025/04/17 18:30:29 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ static int	copy_env(char **new_env, char **env, size_t env_count)
 	return (0);
 }
 
-static int	add_var(t_shell *sh, const char *var)
+int	add_env(t_shell *sh, const char *var)
 {
 	char	**new_env;
 	size_t	env_count;
@@ -105,7 +105,7 @@ static int	process_var(t_shell *sh, const char *var)
 	{
 		write(2, "export: '", 9);
 		write(2, var, ft_strlen(var));
-		write(2, "': not a valid identifier\n", 25);
+		write(2, "': not a valid identifier\n", 26);
 		return (1);
 	}
 	equal_sign = ft_strchr(var, '=');
@@ -114,7 +114,7 @@ static int	process_var(t_shell *sh, const char *var)
 	var_len = equal_sign - var;
 	if (replace_var(sh, var, var_len) != -1)
 		return (0);
-	return (add_var(sh, var));
+	return (add_env(sh, var));
 }
 
 int	print_sorted_env(t_shell *sh)

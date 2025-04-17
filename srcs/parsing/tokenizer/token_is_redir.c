@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   token_is_redir.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: leaugust <leaugust@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/28 23:09:13 by julien            #+#    #+#             */
-/*   Updated: 2025/04/14 20:04:01 by leaugust         ###   ########.fr       */
+/*   Updated: 2025/04/17 18:12:43 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ static void	get_redir_file(char *input, int *i, t_token_list *tokens)
 		file = ft_substr(input, start, *i - start);
 		if (file)
 		{
-			add_token(tokens, file, REDIR_FILE, 0);
+			add_token(tokens, file, REDIR_FILE, NO_QUOTE);
 			free(file);
 		}
 	}
@@ -57,13 +57,13 @@ static void	handle_output_redir(char *input, int *i, t_token_list *tokens)
 	{
 		temp[0] = input[*i];
 		temp[1] = input[*i + 1];
-		add_token(tokens, temp, APPEND, 0);
+		add_token(tokens, temp, APPEND, NO_QUOTE);
 		(*i)++;
 	}
 	else
 	{
 		temp[0] = input[*i];
-		add_token(tokens, temp, REDIR_OUT, 0);
+		add_token(tokens, temp, REDIR_OUT, NO_QUOTE);
 	}
 	get_redir_file(input, i, tokens);
 }
@@ -87,13 +87,13 @@ static void	handle_input_redir(char *input, int *i, t_token_list *tokens)
 	{
 		temp[0] = input[*i];
 		temp[1] = input[*i + 1];
-		add_token(tokens, temp, HEREDOC, 0);
+		add_token(tokens, temp, HEREDOC, NO_QUOTE);
 		(*i)++;
 	}
 	else
 	{
 		temp[0] = input[*i];
-		add_token(tokens, temp, REDIR_IN, 0);
+		add_token(tokens, temp, REDIR_IN, NO_QUOTE);
 	}
 	get_redir_file(input, i, tokens);
 }

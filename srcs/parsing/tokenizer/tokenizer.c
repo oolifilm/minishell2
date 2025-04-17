@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: julien <julien@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 17:46:05 by jbanchon          #+#    #+#             */
-/*   Updated: 2025/04/17 00:49:54 by julien           ###   ########.fr       */
+/*   Updated: 2025/04/17 18:21:53 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,11 +65,13 @@ static int	init_tokenizer(char *input, t_token_list **tokens, int *i)
 static void	process_tokens(char *input, t_token_list *tokens, int *i,
 		int *is_first_word)
 {
-	size_t	len;
-	char	buffer[1024];
-	int		buffer_len;
-	int		in_quotes;
-	char	quote_type;
+	size_t			len;
+	char			buffer[1024];
+	int				buffer_len;
+	int				in_quotes;
+	char			quote_type;
+	char			*processed;
+	t_quote_state	current_quote_state;
 
 	len = ft_strlen(input);
 	buffer_len = 0;
@@ -77,19 +79,15 @@ static void	process_tokens(char *input, t_token_list *tokens, int *i,
 	quote_type = 0;
 	buffer[0] = '\0';
 	(void)is_first_word;
-
 	while (*i < (int)len)
 	{
 		if (in_quotes)
 		{
 			if (input[*i] == quote_type)
-			{
 				in_quotes = 0;
-				quote_type = 0;
-			}
 			buffer[buffer_len++] = input[*i];
 			(*i)++;
-			continue;
+			continue ;
 		}
 		if (input[*i] == '\'' || input[*i] == '"')
 		{
@@ -97,14 +95,20 @@ static void	process_tokens(char *input, t_token_list *tokens, int *i,
 			quote_type = input[*i];
 			buffer[buffer_len++] = input[*i];
 			(*i)++;
-			continue;
+			continue ;
 		}
 		if (input[*i] == '$')
 		{
 			if (buffer_len > 0)
 			{
 				buffer[buffer_len] = '\0';
-				add_token(tokens, ft_strdup(buffer), STRING, 1);
+				processed = remove_quotes(buffer);
+				current_quote_state = NO_QUOTE;
+				if (quote_type == '\'')
+					current_quote_state = SINGLE_QUOTE;
+				else if (quote_type == '"')
+					current_quote_state = DOUBLE_QUOTE;
+				add_token(tokens, processed, STRING, current_quote_state);
 				buffer_len = 0;
 			}
 			assign_dollar(input, i, tokens);
@@ -114,7 +118,13 @@ static void	process_tokens(char *input, t_token_list *tokens, int *i,
 			if (buffer_len > 0)
 			{
 				buffer[buffer_len] = '\0';
-				add_token(tokens, ft_strdup(buffer), STRING, 1);
+				processed = remove_quotes(buffer);
+				current_quote_state = NO_QUOTE;
+				if (quote_type == '\'')
+					current_quote_state = SINGLE_QUOTE;
+				else if (quote_type == '"')
+					current_quote_state = DOUBLE_QUOTE;
+				add_token(tokens, processed, STRING, current_quote_state);
 				buffer_len = 0;
 			}
 			assign_pipe(input[*i], tokens);
@@ -125,7 +135,13 @@ static void	process_tokens(char *input, t_token_list *tokens, int *i,
 			if (buffer_len > 0)
 			{
 				buffer[buffer_len] = '\0';
-				add_token(tokens, ft_strdup(buffer), STRING, 1);
+				processed = remove_quotes(buffer);
+				current_quote_state = NO_QUOTE;
+				if (quote_type == '\'')
+					current_quote_state = SINGLE_QUOTE;
+				else if (quote_type == '"')
+					current_quote_state = DOUBLE_QUOTE;
+				add_token(tokens, processed, STRING, current_quote_state);
 				buffer_len = 0;
 			}
 			assign_redirection(input, i, tokens);
@@ -135,8 +151,13 @@ static void	process_tokens(char *input, t_token_list *tokens, int *i,
 			if (buffer_len > 0)
 			{
 				buffer[buffer_len] = '\0';
-				char *processed = remove_quotes(buffer);
-				add_token(tokens, processed, STRING, 1);
+				processed = remove_quotes(buffer);
+				current_quote_state = NO_QUOTE;
+				if (quote_type == '\'')
+					current_quote_state = SINGLE_QUOTE;
+				else if (quote_type == '"')
+					current_quote_state = DOUBLE_QUOTE;
+				add_token(tokens, processed, STRING, current_quote_state);
 				buffer_len = 0;
 			}
 			skip_spaces(input, i);
@@ -150,8 +171,13 @@ static void	process_tokens(char *input, t_token_list *tokens, int *i,
 	if (buffer_len > 0)
 	{
 		buffer[buffer_len] = '\0';
-		char *processed = remove_quotes(buffer);
-		add_token(tokens, processed, STRING, 1);
+		processed = remove_quotes(buffer);
+		current_quote_state = NO_QUOTE;
+		if (quote_type == '\'')
+			current_quote_state = SINGLE_QUOTE;
+		else if (quote_type == '"')
+			current_quote_state = DOUBLE_QUOTE;
+		add_token(tokens, processed, STRING, current_quote_state);
 	}
 }
 

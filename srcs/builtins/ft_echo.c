@@ -3,26 +3,30 @@
 /*                                                        :::      ::::::::   */
 /*   ft_echo.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: leaugust <leaugust@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/28 14:14:58 by jbanchon          #+#    #+#             */
-/*   Updated: 2025/04/17 11:58:34 by leaugust         ###   ########.fr       */
+/*   Updated: 2025/04/17 16:33:30 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-
-static int is_echo_option_n(char *str)
+static int	is_echo_option_n(char *str)
 {
-	int i;
+	int	i;
 
-	i = 1;
-	if (!str || str[0] != '-' || str[1] != 'n')
+	i = 0;
+	if (str[i++] != '-')
 		return (0);
-	while (str[i] == 'n')
-		i++;
-	return (str[i] == '\0');
+	if (str[i] == '\0')
+		return (0);
+	while (str[i])
+	{
+		if (str[i++] != 'n')
+			return (0);
+	}
+	return (1);
 }
 
 /*
@@ -35,16 +39,14 @@ Option -n :
 Utilisation UNIX de la commande echo : echo [OPTIONS] [TEXTE].
 */
 
-int	ft_echo(char **argv)
+int	ft_echo(t_shell *sh, char **argv)
 {
 	int	i;
 	int	newline;
 
-	if (argv[0] && ft_strcmp(argv[0], "echo") == 0)
-		i = 1;
-	else
-		i = 0;
+	i = 1;
 	newline = 1;
+	(void)sh;
 	while (argv[i] && is_echo_option_n(argv[i]))
 	{
 		newline = 0;
@@ -52,12 +54,13 @@ int	ft_echo(char **argv)
 	}
 	while (argv[i])
 	{
-		printf("%s", argv[i]);
+		ft_putstr_fd(argv[i], STDOUT_FILENO);
 		if (argv[i + 1])
-			printf(" ");
+			ft_putstr_fd(" ", STDOUT_FILENO);
 		i++;
 	}
 	if (newline)
-		printf("\n");
+		ft_putstr_fd("\n", STDOUT_FILENO);
+	sh->last_exit_status = 0;
 	return (0);
 }

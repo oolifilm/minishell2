@@ -6,7 +6,7 @@
 /*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 10:59:25 by julien            #+#    #+#             */
-/*   Updated: 2025/04/16 13:15:24 by jbanchon         ###   ########.fr       */
+/*   Updated: 2025/04/17 18:12:59 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 void	assign_pipe(char input, t_token_list *tokens)
 {
 	if (input == '|')
-		add_token(tokens, "|", PIPE, 0);
+		add_token(tokens, "|", PIPE, NO_QUOTE);
 }
 
 /* Gère le caractère $. */
@@ -30,7 +30,7 @@ void	assign_dollar(char *input, int *i, t_token_list *tokens)
 	(*i)++;
 	if (input[*i] == '?')
 	{
-		add_token(tokens, "?", EXIT, 0);
+		add_token(tokens, "?", EXIT, NO_QUOTE);
 		(*i)++;
 		return;
 	}
@@ -43,9 +43,9 @@ void	assign_dollar(char *input, int *i, t_token_list *tokens)
 	}
 	var_name[j] = '\0';
 	if (j == 0)
-		add_token(tokens, "$", STRING, 0);
+		add_token(tokens, "$", STRING, NO_QUOTE);
 	else
-		add_token(tokens, var_name, ENV, 0);
+		add_token(tokens, var_name, ENV, NO_QUOTE);
 }
 
 /* Extrait le nom d'une variable d'environnement à partir d'une chaîne input. */

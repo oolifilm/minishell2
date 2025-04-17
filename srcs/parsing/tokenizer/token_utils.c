@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   token_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: leaugust <leaugust@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 10:57:49 by julien            #+#    #+#             */
-/*   Updated: 2025/04/14 20:05:02 by leaugust         ###   ########.fr       */
+/*   Updated: 2025/04/17 18:27:51 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 /* Crée un nouveau token pour chaque élément
 (commande, argument, opérateur, etc.). */
 
-t_token	*new_token(char *input, t_token_type type, int quoted)
+t_token	*new_token(char *input, t_token_type type, t_quote_state quote_state)
 {
 	t_token	*token;
 
@@ -29,7 +29,7 @@ t_token	*new_token(char *input, t_token_type type, int quoted)
 		return (NULL);
 	}
 	token->type = type;
-	token->quoted = quoted;
+	token->quote_state = quote_state;
 	token->next = NULL;
 	return (token);
 }
@@ -37,7 +37,7 @@ t_token	*new_token(char *input, t_token_type type, int quoted)
 /* Ajoute un token à la liste chaînée. */
 
 t_token	*add_token(t_token_list *tokens, char *input, t_token_type type,
-		int quoted)
+		t_quote_state quoted)
 {
 	t_token	*new;
 
@@ -54,6 +54,7 @@ t_token	*add_token(t_token_list *tokens, char *input, t_token_type type,
 		tokens->cur->next = new;
 		tokens->cur = new;
 	}
+	tokens->size++;
 	return (new);
 }
 
@@ -87,31 +88,31 @@ void	free_tokens(t_token_list *tokens_list)
 /* Renvoie une chaîne de caractères correspondant
 au type de token (t_token_type) passé en paramètre. */
 
-char	*get_token_type_str(t_token_type type)
-{
-	if (type == CMD)
-		return ("CMD");
-	else if (type == ARG)
-		return ("ARG");
-	else if (type == PIPE)
-		return ("PIPE");
-	else if (type == REDIR_IN)
-		return ("REDIR_IN");
-	else if (type == REDIR_OUT)
-		return ("REDIR_OUT");
-	else if (type == APPEND)
-		return ("APPEND");
-	else if (type == HEREDOC)
-		return ("HEREDOC");
-	else if (type == EXIT)
-		return ("EXIT");
-	else if (type == ENV)
-		return ("ENV");
-	else if (type == REDIR_FILE)
-		return ("REDIR_FILE");
-	else if (type == STRING)
-		return ("STRING");
-	else if (type == DOLLAR)
-		return ("DOLLAR");
-	return ("UNKNOWN");
-}
+// char	*get_token_type_str(t_token_type type)
+// {
+// 	if (type == CMD)
+// 		return ("CMD");
+// 	else if (type == ARG)
+// 		return ("ARG");
+// 	else if (type == PIPE)
+// 		return ("PIPE");
+// 	else if (type == REDIR_IN)
+// 		return ("REDIR_IN");
+// 	else if (type == REDIR_OUT)
+// 		return ("REDIR_OUT");
+// 	else if (type == APPEND)
+// 		return ("APPEND");
+// 	else if (type == HEREDOC)
+// 		return ("HEREDOC");
+// 	else if (type == EXIT)
+// 		return ("EXIT");
+// 	else if (type == ENV)
+// 		return ("ENV");
+// 	else if (type == REDIR_FILE)
+// 		return ("REDIR_FILE");
+// 	else if (type == STRING)
+// 		return ("STRING");
+// 	else if (type == DOLLAR)
+// 		return ("DOLLAR");
+// 	return ("UNKNOWN");
+// }

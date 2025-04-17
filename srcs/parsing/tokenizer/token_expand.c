@@ -6,20 +6,18 @@
 /*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/11 16:45:07 by jbanchon          #+#    #+#             */
-/*   Updated: 2025/04/16 13:07:04 by jbanchon         ###   ########.fr       */
+/*   Updated: 2025/04/17 18:06:13 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../../include/minishell.h"
 
-int		g_exit_status;
-
-char	*expand_token(t_token *token)
+char	*expand_token(t_shell *sh, t_token *token)
 {
 	char	*value;
 
 	if (token->type == EXIT)
-		return (ft_itoa(g_exit_status));
+		return (ft_itoa(sh->last_exit_status));
 	else if (token->type == ENV)
 	{
 		value = getenv(token->input);
@@ -32,21 +30,34 @@ char	*expand_token(t_token *token)
 		return (ft_strdup(token->input));
 }
 
-void	expand_token_list(t_token *token)
+void	expand_token_list(t_shell *sh, t_token *token)
 {
-	t_token *cur;
+	char	*key;
+	char	*value;
+	char	*old;
 
-	cur = token;
-	while (cur)
+	while (token)
 	{
-		if (cur->type == ENV || cur->type == EXIT)
+		if (token->input[0] == '$' && token->quote_state != SINGLE_QUOTE)
 		{
-			char *expanded;
-			expanded = expand_token(cur);
-			free(cur->input);
-			cur->input = expanded;
-			cur->type = STRING;
+			if (token->input[1] == '?')
+				value = ft_itoa(sh->last_exit_status);
+			else
+			{
+				key = ft_substr(token->input, 1, ft_strlen(token->input) - 1);
+				if (!key)
+					return ;
+				value = get_env_value(sh->env, key);
+				free(key);
+			}
+			old = token->input;
+			if (value)
+				token->input = value;
+			else
+				token->input = ft_strdup("");
+			free(old);
+			token->type = STRING;
 		}
-		cur = cur->next;
+		token = token->next;
 	}
 }

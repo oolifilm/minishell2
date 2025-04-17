@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   token_quotes.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: julien <julien@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 11:00:31 by julien            #+#    #+#             */
-/*   Updated: 2025/04/17 00:51:15 by julien           ###   ########.fr       */
+/*   Updated: 2025/04/17 18:22:58 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,14 +70,10 @@ static void	handle_single_quote(char *input, int *i, t_token_list *tokens)
 	{
 		while (start < *i && len < 1023)
 			buffer[len++] = input[start++];
-		(*i)++;
-		while (input[*i] && !ft_isspace(input[*i])
-			&& !is_token_breaker(input[*i]) && len < 1023)
-			buffer[len++] = input[(*i)++];
 		buffer[len] = '\0';
-		content = remove_quotes(buffer);
-		add_token(tokens, content ? content : ft_strdup(buffer), STRING, 1);
-		free(content);
+		(*i)++;
+		content = ft_strdup(buffer);
+		add_token(tokens, content, STRING, SINGLE_QUOTE);
 	}
 }
 
@@ -114,9 +110,7 @@ static void	handle_double_quotes(char *input, int *i, t_token_list *tokens)
 					buffer[len++] = input[(*i)++];
 				buffer[len] = '\0';
 				final_content = remove_quotes(buffer);
-				add_token(tokens,
-					final_content ? final_content : ft_strdup(buffer), STRING,
-					1);
+				add_token(tokens, final_content, STRING, DOUBLE_QUOTE);
 				free(final_content);
 			}
 		}

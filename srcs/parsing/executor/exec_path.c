@@ -6,7 +6,7 @@
 /*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/11 22:25:24 by julien            #+#    #+#             */
-/*   Updated: 2025/04/16 12:36:07 by jbanchon         ###   ########.fr       */
+/*   Updated: 2025/04/17 15:22:05 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,10 +59,19 @@ int	handle_execve_err(char *path, char **argv)
 {
 	if (errno == ENOENT)
 	{
-		ft_putstr_fd("minishell: ", 2);
-		ft_putstr_fd(argv[0], 2);
-		ft_putstr_fd(": command not found\n", 2);
+		printf("%s: %s\n", path, strerror(errno));
+		free((void *)path);
+		ft_free_split(argv);
+		exit(127);
 	}
+	if (errno == EACCES)
+	{
+		printf("%s: %s\n", path, strerror(errno));
+		free((void *)path);
+		ft_free_split(argv);
+		exit(126);
+	}
+	printf("%s: %s\n", path, strerror(errno));
 	perror("minishell");
 	free(path);
 	ft_free_split(argv);

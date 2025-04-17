@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: julien <julien@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 14:11:12 by leaugust          #+#    #+#             */
-/*   Updated: 2025/04/17 00:04:05 by julien           ###   ########.fr       */
+/*   Updated: 2025/04/17 18:15:29 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,13 +14,13 @@
 # define MINISHELL_H
 
 # include "../libft/libft.h"
-# include <stdio.h>
 # include <errno.h>
 # include <fcntl.h>
 # include <readline/history.h>
 # include <readline/readline.h>
 # include <signal.h>
 # include <stdbool.h>
+# include <stdio.h>
 # include <stdlib.h>
 # include <string.h>
 # include <sys/wait.h>
@@ -46,11 +46,18 @@ typedef enum e_token_type
 	REDIR_FILE,
 }					t_token_type;
 
+typedef enum e_quote_state
+{
+	NO_QUOTE,
+	SINGLE_QUOTE,
+	DOUBLE_QUOTE,
+}					t_quote_state;
+
 typedef struct s_token
 {
 	char			*input;
 	t_token_type	type;
-	int				quoted;
+	t_quote_state	quote_state;
 	struct s_token	*next;
 }					t_token;
 
@@ -117,9 +124,10 @@ char				*remove_quotes(const char *s);
 
 /*=====TOKEN_UTILS=====*/
 
+t_token				*new_token(char *input, t_token_type type,
+						t_quote_state quote_state);
 t_token				*add_token(t_token_list *tokens, char *input,
-						t_token_type type, int quoted);
-t_token				*new_token(char *input, t_token_type type, int quoted);
+						t_token_type type, t_quote_state quoted);
 void				skip_spaces(char *input, int *i);
 void				free_tokens(t_token_list *tokens_list);
 char				*get_token_type_str(t_token_type type);
@@ -129,8 +137,8 @@ char				*get_token_type_str(t_token_type type);
 t_token_list		*tokenize_input(char *input);
 t_token_list		*init_token_list(void);
 
-void				expand_token_list(t_token *token);
-char				*expand_token(t_token *token);
+void				expand_token_list(t_shell *sh, t_token *token);
+char				*expand_token(t_shell *sh, t_token *token);
 
 /******************************/
 /*==========PARSING==========*/
@@ -150,15 +158,16 @@ int					is_ignored_char(char c);
 
 /*======EXEC======*/
 
-char				**build_argv(t_token *token);
-char				**fill_argv(t_token *token, char **argv);
+char				**build_argv(t_shell *sh, t_token *token);
+char				**fill_argv(t_shell *sh, t_token *token, char **argv);
 int					exec_builtin_cmd(t_shell *sh, t_token *token, char *input);
 void				exec_cmd(t_shell *sh, t_token *token, char *input);
 int					exec_ext_cmd(t_shell *sh, t_token *token, char **argv);
 int					run_ext_child(t_shell *sh, t_token *token, char *path,
 						char **argv);
 int					handle_execve_err(char *path, char **argv);
-int					exec_builtin_redirect(t_shell *sh, t_token *token, char *input);
+int					exec_builtin_redirect(t_shell *sh, t_token *token,
+						char *input);
 int					handle_redirect(t_token *token, char *input);
 int					has_redirect(t_token *token);
 int					ft_free_split(char **tab);
@@ -166,43 +175,44 @@ int					is_builtin(char *cmd);
 char				*get_path(char *cmd);
 int					exec_pipe(t_shell *sh, t_token *cmd, char *input);
 int					contains_pipe(t_token *token);
+int					set_exit_code(t_shell *sh, int status);
+int					get_exit_code(t_shell *sh);
+char				*get_env_value(char **env, const char *key);
 
 /*******************************/
 /*==========BUILTINS==========*/
 /*****************************/
 /*=====FT_CD=====*/
 
-int					ft_cd(char **argv);
-int					handle_command(t_token_list *tokens);
+int					ft_cd(t_shell *sh, char **argv);
+int					handle_command(t_shell *sh, t_token_list *tokens);
 
 /*=====FT_ECHO=====*/
 
-int					ft_echo(char **argv);
-int					ft_echo_is_command(t_token_list *tokens);
+int					ft_echo(t_shell *sh, char **argv);
 
 /*=====FT_ENV=====*/
 
 int					ft_env(t_shell *sh, char **argv);
-int					ft_env_is_command(t_token_list *tokens);
 
 /*=====FT_EXIT=====*/
 
-int					ft_exit(char **argv);
+int					ft_exit(t_shell *sh, char **argv);
 
 /*=====FT_EXPORT=====*/
 
-int					add_env(char *var);
 int					ft_export(t_shell *sh, char **argv);
+int					add_env(t_shell *sh, const char *var);
 char				**init_env(char **envp);
 
 /*=====FT_PWD=====*/
 
-int					ft_pwd(char **argv);
+int					ft_pwd(t_shell *sh, char **argv);
 
 /*=====FT_UNSET=====*/
 
 int					ft_unset(t_shell *sh, char **argv);
-int					ft_unset_is_command(t_token_list *tokens);
+void				remove_env_var(t_shell *sh, char *var);
 
 /*=====BUILTIN_UTILS=====*/
 

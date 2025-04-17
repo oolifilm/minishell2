@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_unset.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: leaugust <leaugust@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/28 14:16:16 by jbanchon          #+#    #+#             */
-/*   Updated: 2025/04/14 20:02:35 by leaugust         ###   ########.fr       */
+/*   Updated: 2025/04/17 13:10:21 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ Commande unset : supprimer une variable d'environnement
 Utilisation : unset [variable]
 */
 
-static void	remove_env_var(t_shell *sh, char *var)
+void	remove_env_var(t_shell *sh, char *var)
 {
 	int		i;
 	int		j;

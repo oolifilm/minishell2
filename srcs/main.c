@@ -6,7 +6,7 @@
 /*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/28 11:35:29 by julien            #+#    #+#             */
-/*   Updated: 2025/04/16 12:41:27 by jbanchon         ###   ########.fr       */
+/*   Updated: 2025/04/17 18:27:55 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,8 +127,8 @@ int	main(int argc, char **argv, char **envp)
 			tmp = tokens_list->head;
 			while (tmp)
 			{
-				printf("Type: %s, Value: %s\n", get_token_type_str(tmp->type),
-					tmp->input);
+				// printf("Type: %s, Value: %s\n", get_token_type_str(tmp->type),
+				// 	tmp->input);
 				tmp = tmp->next;
 			}
 			tmp = tokens_list->head;
