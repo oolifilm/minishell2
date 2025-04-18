@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: leaugust <leaugust@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 14:11:12 by leaugust          #+#    #+#             */
-/*   Updated: 2025/04/18 11:37:45 by leaugust         ###   ########.fr       */
+/*   Updated: 2025/04/18 16:59:43 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -179,6 +179,11 @@ int					contains_pipe(t_token *token);
 int					set_exit_code(t_shell *sh, int status);
 int					get_exit_code(t_shell *sh);
 char				*get_env_value(char **env, const char *key);
+int					handle_path_error(char *shell, char *cmd);
+char				*ft_strjoin3(const char *s1, const char *s2,
+						const char *s3);
+int					handle_path_error(char *shell, char *cmd);
+int					handle_execve_err(char *path, char **argv);
 
 /*******************************/
 /*==========BUILTINS==========*/
@@ -214,6 +219,7 @@ int					ft_pwd(t_shell *sh, char **argv);
 
 int					ft_unset(t_shell *sh, char **argv);
 void				remove_env_var(t_shell *sh, char *var);
+int					is_valid_identifier(const char *str);
 
 /*=====BUILTIN_UTILS=====*/
 

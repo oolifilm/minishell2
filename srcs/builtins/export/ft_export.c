@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_export.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: leaugust <leaugust@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/28 14:16:14 by jbanchon          #+#    #+#             */
-/*   Updated: 2025/04/18 10:39:10 by leaugust         ###   ########.fr       */
+/*   Updated: 2025/04/18 13:16:16 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -158,10 +158,28 @@ int	print_sorted_env(t_shell *sh)
 	return (0);
 }
 
-int	ft_export(t_shell *sh, char **argv)
+int	is_valid_key(const char *str)
 {
 	size_t	i;
 
+	i = 0;
+	if (!str[0] || (!ft_isalpha(str[0]) && str[0] != '_'))
+		return (0);
+	while (str[i] && str[i] != '=')
+	{
+		if (!ft_isalnum(str[i]) && str[i] != '_')
+			return (0);
+		i++;
+	}
+	return (1);
+}
+
+int	ft_export(t_shell *sh, char **argv)
+{
+	int	i;
+	int	ret;
+
+	ret = 0;
 	if (!argv || !argv[0])
 		return (1);
 	if (!argv[1])
@@ -169,9 +187,17 @@ int	ft_export(t_shell *sh, char **argv)
 	i = 1;
 	while (argv[i])
 	{
-		if (process_var(sh, argv[i]) != 0)
-			return (1);
+		if (!is_valid_key(argv[i]))
+		{
+			ft_putstr_fd("export: `", STDERR_FILENO);
+			ft_putstr_fd(argv[i], STDERR_FILENO);
+			ft_putstr_fd("': not a valid identifier\n", STDERR_FILENO);
+			ret = 1;
+		}
+		else
+			process_var(sh, argv[i]);
 		i++;
 	}
-	return (0);
+	sh->last_exit_status = ret;
+	return (ret);
 }

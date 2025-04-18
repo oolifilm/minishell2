@@ -6,7 +6,7 @@
 /*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/11 22:25:24 by julien            #+#    #+#             */
-/*   Updated: 2025/04/17 15:22:05 by jbanchon         ###   ########.fr       */
+/*   Updated: 2025/04/18 17:02:27 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,10 @@ char	*get_path(char *cmd)
 
 	path = getenv("PATH");
 	if (!path)
-		return (NULL);
+		exit(handle_path_error("minishell", cmd));
 	i = 0;
+	if (ft_strchr(cmd, '/'))
+		return (ft_strdup(cmd));
 	path_split = ft_split(path, ':');
 	while (path_split[i])
 	{
@@ -53,27 +55,4 @@ int	ft_free_split(char **tab)
 	}
 	free(tab);
 	return (0);
-}
-
-int	handle_execve_err(char *path, char **argv)
-{
-	if (errno == ENOENT)
-	{
-		printf("%s: %s\n", path, strerror(errno));
-		free((void *)path);
-		ft_free_split(argv);
-		exit(127);
-	}
-	if (errno == EACCES)
-	{
-		printf("%s: %s\n", path, strerror(errno));
-		free((void *)path);
-		ft_free_split(argv);
-		exit(126);
-	}
-	printf("%s: %s\n", path, strerror(errno));
-	perror("minishell");
-	free(path);
-	ft_free_split(argv);
-	exit(1);
 }

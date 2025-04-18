@@ -6,7 +6,7 @@
 /*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 11:48:46 by jbanchon          #+#    #+#             */
-/*   Updated: 2025/04/16 12:13:50 by jbanchon         ###   ########.fr       */
+/*   Updated: 2025/04/18 17:04:46 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,10 @@ int	exec_pipe(t_shell *sh, t_token *token, char *input)
 	t_token	*left_cmd_token;
 	t_token	*pipe_token;
 	t_token	*tmp;
+	int		status;
+	int		exit_code;
 
+	exit_code = 0;
 	left_cmd_token = token;
 	pipe_token = token;
 	while (pipe_token && pipe_token->type != PIPE)
@@ -75,7 +78,7 @@ int	exec_pipe(t_shell *sh, t_token *token, char *input)
 		return (1);
 	cmd_right = get_next_cmd(pipe_token->next);
 	if (!cmd_right)
-		return (printf("[ERROR] No command after pipe.\n"), 1);
+		exit(handle_path_error("minishell", "command not found"));
 	tmp = token;
 	while (tmp && tmp->next != pipe_token)
 		tmp = tmp->next;
@@ -99,9 +102,13 @@ int	exec_pipe(t_shell *sh, t_token *token, char *input)
 	}
 	close(fd[0]);
 	close(fd[1]);
-	waitpid(pid_left, NULL, 0);
-	waitpid(pid_right, NULL, 0);
-	return (0);
+	waitpid(pid_left, &status, 0);
+	waitpid(pid_right, &status, 0);
+	if (WIFEXITED(status))
+		exit_code = WEXITSTATUS(status);
+	else if (WIFSIGNALED(status))
+		exit_code = 128 + WTERMSIG(status);
+	return (exit_code);
 }
 
 int	contains_pipe(t_token *token)

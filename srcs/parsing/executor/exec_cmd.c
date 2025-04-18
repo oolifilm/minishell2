@@ -6,7 +6,7 @@
 /*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/11 21:30:28 by julien            #+#    #+#             */
-/*   Updated: 2025/04/17 16:33:11 by jbanchon         ###   ########.fr       */
+/*   Updated: 2025/04/18 15:32:52 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ int	exec_builtin_redirect(t_shell *sh, t_token *token, char *input)
 		return (perror("minishell"), 1);
 	if (pid == 0)
 	{
-		if (handle_redirect(token, NULL) == -1)
+		if (handle_redirect(token, NULL) != 0)
 			exit(1);
 		exit(exec_builtin_cmd(sh, token, input));
 	}

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_unset.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: leaugust <leaugust@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/28 14:16:16 by jbanchon          #+#    #+#             */
-/*   Updated: 2025/04/18 10:38:32 by leaugust         ###   ########.fr       */
+/*   Updated: 2025/04/18 13:08:53 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,15 +62,41 @@ void	remove_env_var(t_shell *sh, char *var)
 	sh->env = new_env;
 }
 
+int	is_valid_identifier(const char *str)
+{
+	size_t	i;
+
+	i = 1;
+	if (!str || (!ft_isalpha(str[0]) && str[0] != '_'))
+		return (0);
+	while (str[i])
+	{
+		if (!ft_isalnum(str[i]) && str[i] != '_')
+			return (0);
+		i++;
+	}
+	return (1);
+}
+
 int	ft_unset(t_shell *sh, char **argv)
 {
 	int	i;
+	int	ret;
 
 	i = 1;
+	ret = 0;
 	while (argv[i])
 	{
-		remove_env_var(sh, argv[i]);
+		if (!is_valid_identifier(argv[i]))
+		{
+			ft_putstr_fd("unset: `", STDERR_FILENO);
+			ft_putstr_fd(argv[i], STDERR_FILENO);
+			ft_putstr_fd("': not a valid identifier\n", STDERR_FILENO);
+			ret = 1;
+		}
+		else
+			remove_env_var(sh, argv[i]);
 		i++;
 	}
-	return (0);
+	return (ret);
 }

@@ -6,11 +6,19 @@
 /*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/28 14:16:11 by jbanchon          #+#    #+#             */
-/*   Updated: 2025/04/17 15:29:41 by jbanchon         ###   ########.fr       */
+/*   Updated: 2025/04/18 15:27:16 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
+
+int	handle_exit_error(char *s)
+{
+	ft_putstr_fd("minishell: exit: ", 2);
+	ft_putstr_fd(s, 2);
+	ft_putstr_fd(": numeric argument required\n", 2);
+	exit(2);
+}
 
 static long	parse_exit_arg(char *s)
 {
@@ -20,6 +28,7 @@ static long	parse_exit_arg(char *s)
 
 	i = 0;
 	sign = 1;
+	num = 0;
 	if (s[0] == '+' || s[0] == '-')
 	{
 		if (s[0] == '-')
@@ -27,18 +36,13 @@ static long	parse_exit_arg(char *s)
 		i++;
 	}
 	if (s[i] == '\0')
-	{
-		printf("exit: %s: numeric argument required\n", s);
-		exit(255);
-	}
+		handle_exit_error(s);
 	while (s[i])
 	{
 		if (!ft_isdigit(s[i]))
-		{
-			printf("exit: %s: numeric argument required\n", s);
-			exit(255);
-		}
-		num = num * 10 + (s[i++] - '0');
+			handle_exit_error(s);
+		num = num * 10 + (s[i] - '0');
+		i++;
 	}
 	return (num * sign);
 }
@@ -59,9 +63,9 @@ int	ft_exit(t_shell *sh, char **argv)
 	code = parse_exit_arg(argv[1]);
 	if (argv[2])
 	{
-		printf("exit : too many arguments\n");
+		ft_putstr_fd("minishell: exit: too many arguments\n", 2);
 		sh->last_exit_status = 1;
 		return (1);
 	}
-	exit((int)(code & 0xFF));
+	exit((unsigned char)code);
 }

@@ -6,7 +6,7 @@
 /*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/11 21:30:30 by julien            #+#    #+#             */
-/*   Updated: 2025/04/17 15:10:30 by jbanchon         ###   ########.fr       */
+/*   Updated: 2025/04/18 15:32:12 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ int	handle_redirect(t_token *token, char *input)
 		{
 			fd = open(cur->next->input, O_RDONLY);
 			if (fd < 0)
-				return (perror("minishell"), 1);
+				return (perror("minishell"), -1);
 			if (dup2(fd, STDIN_FILENO) < 0)
 				return (perror("minishell"), close(fd), 1);
 			close(fd);
