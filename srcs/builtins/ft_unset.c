@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_unset.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
+/*   By: leaugust <leaugust@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/28 14:16:16 by jbanchon          #+#    #+#             */
-/*   Updated: 2025/04/17 13:10:21 by jbanchon         ###   ########.fr       */
+/*   Updated: 2025/04/18 10:38:32 by leaugust         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,16 +25,24 @@ void	remove_env_var(t_shell *sh, char *var)
 	int		j;
 	char	**new_env;
 	int		env_count;
+	int		remove_count;
 
 	i = 0;
 	j = 0;
-	while (sh->env[i])
-		i++;
-	env_count = i;
-	new_env = malloc(sizeof(char *) * i);
+	env_count = 0;
+	remove_count = 0;
+	while (sh->env[env_count])
+	{
+		if (ft_strncmp(sh->env[env_count], var, ft_strlen(var)) == 0
+			&& sh->env[env_count][ft_strlen(var)] == '=')
+			remove_count++;
+		env_count++;
+	}
+	new_env = malloc(sizeof(char *) * (env_count - remove_count + 1));
 	if (!new_env)
 		return ;
 	i = 0;
+	j = 0;
 	while (sh->env[i])
 	{
 		if (ft_strncmp(sh->env[i], var, ft_strlen(var)) == 0
@@ -48,11 +56,8 @@ void	remove_env_var(t_shell *sh, char *var)
 	}
 	new_env[j] = NULL;
 	i = 0;
-	while (i < env_count)
-	{
-		free(sh->env[i]);
-		i++;
-	}
+	while (sh->env[i])
+		free(sh->env[i++]);
 	free(sh->env);
 	sh->env = new_env;
 }

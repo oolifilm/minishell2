@@ -6,7 +6,7 @@
 /*   By: leaugust <leaugust@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/28 14:16:14 by jbanchon          #+#    #+#             */
-/*   Updated: 2025/04/17 18:34:46 by leaugust         ###   ########.fr       */
+/*   Updated: 2025/04/18 10:39:10 by leaugust         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,16 +22,15 @@ static size_t	count_env(char **env)
 	return (i);
 }
 
-static void	free_env_arr(char **env, size_t n)
+static void	free_env_arr(char **env)
 {
 	size_t	i;
 
 	i = 0;
-	while (i < n)
-	{
-		free(env[i]);
-		i++;
-	}
+	if (!env)
+		return ;
+	while (env[i])
+		free(env[i++]);
 	free(env);
 }
 
@@ -45,7 +44,7 @@ static int	copy_env(char **new_env, char **env, size_t env_count)
 		new_env[i] = ft_strdup(env[i]);
 		if (!new_env[i])
 		{
-			free_env_arr(new_env, i);
+			free_env_arr(new_env);
 			return (1);
 		}
 		i++;
@@ -67,11 +66,11 @@ int	add_env(t_shell *sh, const char *var)
 	new_env[env_count] = ft_strdup(var);
 	if (!new_env[env_count])
 	{
-		free_env_arr(new_env, env_count);
+		free_env_arr(new_env);
 		return (1);
 	}
 	new_env[env_count + 1] = NULL;
-	free_env_arr(sh->env, env_count);
+	free_env_arr(sh->env);
 	sh->env = new_env;
 	return (0);
 }
@@ -83,7 +82,8 @@ static int	replace_var(t_shell *sh, const char *var, size_t var_len)
 	i = 0;
 	while (sh->env[i])
 	{
-		if (ft_strncmp(sh->env[i], var, var_len) == 0 && sh->env[i][var_len] == '=')
+		if (ft_strncmp(sh->env[i], var, var_len) == 0
+			&& sh->env[i][var_len] == '=')
 		{
 			free(sh->env[i]);
 			sh->env[i] = ft_strdup(var);
@@ -154,7 +154,7 @@ int	print_sorted_env(t_shell *sh)
 		printf("export %s\n", sorted_env[i]);
 		i++;
 	}
-	free_env_arr(sorted_env, env_count);
+	free_env_arr(sorted_env);
 	return (0);
 }
 

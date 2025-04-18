@@ -6,7 +6,7 @@
 /*   By: leaugust <leaugust@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 17:46:05 by jbanchon          #+#    #+#             */
-/*   Updated: 2025/04/17 18:35:52 by leaugust         ###   ########.fr       */
+/*   Updated: 2025/04/18 11:46:25 by leaugust         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -164,17 +164,8 @@ static void	process_tokens(char *input, t_token_list *tokens, int *i,
 		}
 		else
 		{
-			if (input[*i] == '\\' && input[*i + 1])
-			{
-				(*i)++;
-				buffer[buffer_len++] = input[*i];
-				(*i)++;
-			}
-			else
-			{
-				buffer[buffer_len++] = input[*i];
-				(*i)++;
-			}
+			buffer[buffer_len++] = input[*i];
+			(*i)++;
 		}
 	}
 	if (buffer_len > 0)

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
+/*   By: leaugust <leaugust@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 14:11:12 by leaugust          #+#    #+#             */
-/*   Updated: 2025/04/17 18:15:29 by jbanchon         ###   ########.fr       */
+/*   Updated: 2025/04/18 11:37:45 by leaugust         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,6 +139,7 @@ t_token_list		*init_token_list(void);
 
 void				expand_token_list(t_shell *sh, t_token *token);
 char				*expand_token(t_shell *sh, t_token *token);
+char				*ft_strtrim(const char *s1, const char *set);
 
 /******************************/
 /*==========PARSING==========*/
