@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
+/*   By: leaugust <leaugust@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 17:46:05 by jbanchon          #+#    #+#             */
-/*   Updated: 2025/04/18 15:53:34 by jbanchon         ###   ########.fr       */
+/*   Updated: 2025/04/18 19:43:48 by leaugust         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -164,8 +164,17 @@ static void	process_tokens(char *input, t_token_list *tokens, int *i,
 		}
 		else
 		{
-			buffer[buffer_len++] = input[*i];
-			(*i)++;
+			if (input[*i] == '\\' && input[*i + 1])
+			{
+				(*i)++;
+				buffer[buffer_len++] = input[*i];
+				(*i)++;
+			}
+			else
+			{
+				buffer[buffer_len++] = input[*i];
+				(*i)++;
+			}
 		}
 	}
 	if (buffer_len > 0)

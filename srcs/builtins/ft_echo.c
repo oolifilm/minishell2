@@ -6,7 +6,7 @@
 /*   By: leaugust <leaugust@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/28 14:14:58 by jbanchon          #+#    #+#             */
-/*   Updated: 2025/04/18 11:47:27 by leaugust         ###   ########.fr       */
+/*   Updated: 2025/04/18 19:13:39 by leaugust         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,20 +43,11 @@ static int	is_echo_option_n(char *str)
 	return (1);
 }
 
-/*
-Ce qui nous est démandé dans le sujet : echo with option -n
-=================================================================================
-Commande echo : Doit écrire les entrées sur la sortie standard et avec l'option
-Option -n :
-	-n n'affiche pas la nouvelle ligne à la fin. Sinon affiche un retour à la ligne.
-=================================================================================
-Utilisation UNIX de la commande echo : echo [OPTIONS] [TEXTE].
-*/
-
 int	ft_echo(t_shell *sh, char **argv)
 {
-	int	i;
-	int	newline;
+	int		i;
+	int		newline;
+	char	*expanded_value;
 
 	i = 1;
 	newline = 1;
@@ -68,10 +59,39 @@ int	ft_echo(t_shell *sh, char **argv)
 	}
 	while (argv[i])
 	{
-		ft_putstr_fd(argv[i], STDOUT_FILENO);
+		if (ft_strcmp(argv[i], "$") == 0)
+		{
+			ft_putstr_fd("$", STDOUT_FILENO);
+		}
+		else if (argv[i][0] == '$')
+		{
+			if (ft_isalpha(argv[i][1]) || argv[i][1] == '_')
+			{
+				expanded_value = get_env_value(sh->env, argv[i] + 1);
+				if (expanded_value)
+				{
+					ft_putstr_fd(expanded_value, STDOUT_FILENO);
+					free(expanded_value);
+				}
+				else
+				{
+					ft_putstr_fd("$", STDOUT_FILENO);
+				}
+			}
+			else
+			{
+				ft_putstr_fd("$", STDOUT_FILENO);
+			}
+		}
+		else
+		{
+			ft_putstr_fd(argv[i], STDOUT_FILENO);
+		}
 		if (argv[i + 1] && !(ft_strequ(argv[i], "[") || ft_strequ(argv[i + 1],
-					"]")))
+					"]")) && !ft_strequ(argv[i + 1], "%"))
+		{
 			ft_putstr_fd(" ", STDOUT_FILENO);
+		}
 		i++;
 	}
 	if (newline)
