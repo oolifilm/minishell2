@@ -6,7 +6,7 @@
 /*   By: leaugust <leaugust@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/28 14:14:58 by jbanchon          #+#    #+#             */
-/*   Updated: 2025/04/18 11:47:27 by leaugust         ###   ########.fr       */
+/*   Updated: 2025/04/18 18:20:48 by leaugust         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,8 +55,9 @@ Utilisation UNIX de la commande echo : echo [OPTIONS] [TEXTE].
 
 int	ft_echo(t_shell *sh, char **argv)
 {
-	int	i;
-	int	newline;
+	int		i;
+	int		newline;
+	char	*expanded_value;
 
 	i = 1;
 	newline = 1;
@@ -68,10 +69,43 @@ int	ft_echo(t_shell *sh, char **argv)
 	}
 	while (argv[i])
 	{
-		ft_putstr_fd(argv[i], STDOUT_FILENO);
+		// printf("Processing: %s\n", argv[i]);
+		if (ft_strcmp(argv[i], "$") == 0)
+		{
+			// printf("Printing $ alone\n");
+			ft_putstr_fd("$", STDOUT_FILENO);
+		}
+		else if (argv[i][0] == '$')
+		{
+			// printf("Expanding variable: %s\n", argv[i]);
+			if (ft_isalpha(argv[i][1]) || argv[i][1] == '_')
+			{
+				expanded_value = get_env_value(sh->env, argv[i] + 1);
+				if (expanded_value)
+				{
+					// printf("Expanded value: %s\n", expanded_value);
+					ft_putstr_fd(expanded_value, STDOUT_FILENO);
+					free(expanded_value);
+				}
+				else
+				{
+					ft_putstr_fd("$", STDOUT_FILENO);
+				}
+			}
+			else
+			{
+				ft_putstr_fd("$", STDOUT_FILENO);
+			}
+		}
+		else
+		{
+			ft_putstr_fd(argv[i], STDOUT_FILENO);
+		}
 		if (argv[i + 1] && !(ft_strequ(argv[i], "[") || ft_strequ(argv[i + 1],
-					"]")))
+					"]")) && !ft_strequ(argv[i + 1], "%"))
+		{
 			ft_putstr_fd(" ", STDOUT_FILENO);
+		}
 		i++;
 	}
 	if (newline)

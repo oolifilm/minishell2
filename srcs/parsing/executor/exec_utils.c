@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
+/*   By: leaugust <leaugust@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/11 21:30:30 by julien            #+#    #+#             */
-/*   Updated: 2025/04/17 15:10:30 by jbanchon         ###   ########.fr       */
+/*   Updated: 2025/04/18 17:55:17 by leaugust         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,14 +36,18 @@ char	**fill_argv(t_shell *sh, t_token *token, char **argv)
 	cur = token->next;
 	while (cur)
 	{
-		if (cur->type == STRING || cur->type == ARG || cur->type == ENV
-			|| cur->type == EXIT)
-			argv[i++] = expand_token(sh, cur);
+		if (cur->type == STRING || cur->type == ARG || cur->type == ENV || cur->type == EXIT)
+		{
+			argv[i] = expand_token(sh, cur);
+			// printf("argv[%d] = '%s'\n", i, argv[i]);
+			i++;
+		}
 		cur = cur->next;
 	}
 	argv[i] = NULL;
 	return (argv);
 }
+
 
 char	**build_argv(t_shell *sh, t_token *token)
 {

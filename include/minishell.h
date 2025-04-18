@@ -6,7 +6,7 @@
 /*   By: leaugust <leaugust@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 14:11:12 by leaugust          #+#    #+#             */
-/*   Updated: 2025/04/18 11:37:45 by leaugust         ###   ########.fr       */
+/*   Updated: 2025/04/18 14:09:53 by leaugust         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,6 +95,7 @@ typedef struct s_shell
 
 int					get_env_var_name(char *input, int j, char *var_name);
 char				*expand_var_in_dquotes(char *str);
+char				*strjoin_and_free(char *s1, const char *s2);
 
 /*=====TOKEN_CMD=====*/
 
