@@ -6,13 +6,13 @@
 /*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 14:29:56 by jbanchon          #+#    #+#             */
-/*   Updated: 2025/04/18 16:55:07 by jbanchon         ###   ########.fr       */
+/*   Updated: 2025/04/18 17:46:26 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../../include/minishell.h"
 
-static int	get_exec_err_code(void)
+int	get_exec_err_code(void)
 {
 	if (errno == ENOENT)
 		return (127);
@@ -21,7 +21,7 @@ static int	get_exec_err_code(void)
 	return (1);
 }
 
-static void	print_exec_err(char *cmd)
+void	print_exec_err(char *cmd)
 {
 	ft_putstr_fd("minishell: ", STDERR_FILENO);
 	ft_putstr_fd(cmd, STDERR_FILENO);
@@ -48,4 +48,27 @@ int	handle_path_error(char *shell, char *cmd)
 	ft_putstr_fd(cmd, STDERR_FILENO);
 	ft_putstr_fd(": command not found\n", STDERR_FILENO);
 	return (127);
+}
+
+int	handle_exit_status(int status, char *cmd)
+{
+	int	code;
+	int	sig;
+
+	(void)cmd;
+	if (WIFEXITED(status))
+	{
+		code = WEXITSTATUS(status);
+		return (code);
+	}
+	else if (WIFSIGNALED(status))
+	{
+		sig = WTERMSIG(status);
+		if (sig == SIGINT)
+			ft_putstr_fd("\n", STDERR_FILENO);
+		else if (sig == SIGQUIT)
+			ft_putstr_fd("Quit: 3\n", STDERR_FILENO);
+		return (128 + sig);
+	}
+	return (1);
 }

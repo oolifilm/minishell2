@@ -6,7 +6,7 @@
 /*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 11:48:46 by jbanchon          #+#    #+#             */
-/*   Updated: 2025/04/18 17:04:46 by jbanchon         ###   ########.fr       */
+/*   Updated: 2025/04/18 17:33:08 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,12 +25,15 @@ static pid_t	left_cmd(t_shell *sh, t_token *cmd, char *input, int fd[2])
 
 	pid = fork();
 	if (pid < 0)
-		return (perror("minishell"), 1);
+		return (perror("minishell"), -1);
 	if (pid == 0)
 	{
 		close(fd[0]);
 		if (dup2(fd[1], STDOUT_FILENO) < 0)
-			return (perror("minishell"), exit(1), 1);
+		{
+			perror("minishell");
+			exit(1);
+		}
 		close(fd[1]);
 		exec_cmd(sh, cmd, input);
 		exit(0);
@@ -44,12 +47,15 @@ static pid_t	right_cmd(t_shell *sh, t_token *cmd, char *input, int fd[2])
 
 	pid = fork();
 	if (pid < 0)
-		return (perror("minishell"), 1);
+		return (perror("minishell"), -1);
 	if (pid == 0)
 	{
 		close(fd[1]);
 		if (dup2(fd[0], STDIN_FILENO) < 0)
-			return (perror("minishell"), exit(1), 1);
+		{
+			perror("minishell");
+			exit(1);
+		}
 		close(fd[0]);
 		exec_cmd(sh, cmd, input);
 		exit(0);
@@ -66,10 +72,9 @@ int	exec_pipe(t_shell *sh, t_token *token, char *input)
 	t_token	*left_cmd_token;
 	t_token	*pipe_token;
 	t_token	*tmp;
-	int		status;
+	int		status_right;
 	int		exit_code;
 
-	exit_code = 0;
 	left_cmd_token = token;
 	pipe_token = token;
 	while (pipe_token && pipe_token->type != PIPE)
@@ -78,7 +83,7 @@ int	exec_pipe(t_shell *sh, t_token *token, char *input)
 		return (1);
 	cmd_right = get_next_cmd(pipe_token->next);
 	if (!cmd_right)
-		exit(handle_path_error("minishell", "command not found"));
+		return (printf("[ERROR] No command after pipe.\n"), 1);
 	tmp = token;
 	while (tmp && tmp->next != pipe_token)
 		tmp = tmp->next;
@@ -102,12 +107,10 @@ int	exec_pipe(t_shell *sh, t_token *token, char *input)
 	}
 	close(fd[0]);
 	close(fd[1]);
-	waitpid(pid_left, &status, 0);
-	waitpid(pid_right, &status, 0);
-	if (WIFEXITED(status))
-		exit_code = WEXITSTATUS(status);
-	else if (WIFSIGNALED(status))
-		exit_code = 128 + WTERMSIG(status);
+	int dummy;
+	waitpid(pid_left, &dummy, 0);
+	waitpid(pid_right, &status_right, 0);
+	exit_code = handle_exit_status(status_right, cmd_right->input);
 	return (exit_code);
 }
 

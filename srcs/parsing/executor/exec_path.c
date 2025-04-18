@@ -6,7 +6,7 @@
 /*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/11 22:25:24 by julien            #+#    #+#             */
-/*   Updated: 2025/04/18 17:02:27 by jbanchon         ###   ########.fr       */
+/*   Updated: 2025/04/18 17:23:37 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,11 +22,13 @@ char	*get_path(char *cmd)
 
 	path = getenv("PATH");
 	if (!path)
-		exit(handle_path_error("minishell", cmd));
+		return (NULL);
 	i = 0;
 	if (ft_strchr(cmd, '/'))
 		return (ft_strdup(cmd));
 	path_split = ft_split(path, ':');
+	if (!path_split)
+		return (NULL);
 	while (path_split[i])
 	{
 		tmp = ft_strjoin(path_split[i], "/");

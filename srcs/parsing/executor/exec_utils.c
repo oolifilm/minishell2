@@ -6,7 +6,7 @@
 /*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/11 21:30:30 by julien            #+#    #+#             */
-/*   Updated: 2025/04/18 15:32:12 by jbanchon         ###   ########.fr       */
+/*   Updated: 2025/04/18 18:54:08 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,11 @@ char	**build_argv(t_shell *sh, t_token *token)
 
 	count = 1;
 	cur = token->next;
+	if (token->type == CMD && token->input && token->input[0] == '\0')
+	{
+		sh->last_exit_status = 127;
+		return (NULL);
+	}
 	while (cur)
 	{
 		if (cur->type == STRING || cur->type == ARG || cur->type == ENV
@@ -80,7 +85,10 @@ int	handle_redirect(t_token *token, char *input)
 		{
 			fd = open(cur->next->input, O_RDONLY);
 			if (fd < 0)
-				return (perror("minishell"), -1);
+			{
+				print_exec_err(cur->next->input);
+				return (1);
+			}
 			if (dup2(fd, STDIN_FILENO) < 0)
 				return (perror("minishell"), close(fd), 1);
 			close(fd);
@@ -89,7 +97,10 @@ int	handle_redirect(t_token *token, char *input)
 		{
 			fd = open(cur->next->input, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 			if (fd < 0)
-				return (perror("minishell"), 1);
+			{
+				print_exec_err(cur->next->input);
+				return (get_exec_err_code());
+			}
 			if (dup2(fd, STDOUT_FILENO) < 0)
 				return (perror("minishell"), close(fd), 1);
 			close(fd);
@@ -98,7 +109,10 @@ int	handle_redirect(t_token *token, char *input)
 		{
 			fd = open(cur->next->input, O_WRONLY | O_CREAT | O_APPEND, 0644);
 			if (fd < 0)
-				return (perror("minishell"), 1);
+			{
+				print_exec_err(cur->next->input);
+				return (1);
+			}
 			if (dup2(fd, STDOUT_FILENO) < 0)
 				return (perror("minishell"), close(fd), 1);
 			close(fd);

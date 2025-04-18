@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   token_expand.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: leaugust <leaugust@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/11 16:45:07 by jbanchon          #+#    #+#             */
-/*   Updated: 2025/04/18 11:42:22 by leaugust         ###   ########.fr       */
+/*   Updated: 2025/04/18 18:50:48 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,9 @@ void	expand_token_list(t_shell *sh, t_token *token)
 	{
 		if (token->input[0] == '$' && token->quote_state != SINGLE_QUOTE)
 		{
-			if (token->input[1] == '?')
+			if (token->input[1] == '\0')
+				value = ft_strdup("$");
+			else if (token->input[1] == '?')
 				value = ft_itoa(sh->last_exit_status);
 			else
 			{

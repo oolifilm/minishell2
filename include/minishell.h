@@ -6,7 +6,7 @@
 /*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 14:11:12 by leaugust          #+#    #+#             */
-/*   Updated: 2025/04/18 16:59:43 by jbanchon         ###   ########.fr       */
+/*   Updated: 2025/04/18 17:46:44 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -180,10 +180,11 @@ int					set_exit_code(t_shell *sh, int status);
 int					get_exit_code(t_shell *sh);
 char				*get_env_value(char **env, const char *key);
 int					handle_path_error(char *shell, char *cmd);
-char				*ft_strjoin3(const char *s1, const char *s2,
-						const char *s3);
 int					handle_path_error(char *shell, char *cmd);
 int					handle_execve_err(char *path, char **argv);
+int					handle_exit_status(int status, char *cmd);
+void				print_exec_err(char *cmd);
+int					get_exec_err_code(void);
 
 /*******************************/
 /*==========BUILTINS==========*/
