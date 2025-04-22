@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
+/*   By: julien <julien@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 14:11:12 by leaugust          #+#    #+#             */
-/*   Updated: 2025/04/22 16:44:09 by jbanchon         ###   ########.fr       */
+/*   Updated: 2025/04/22 23:22:00 by julien           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,23 +14,26 @@
 # define MINISHELL_H
 
 # include "../libft/libft.h"
-# include <errno.h>
-# include <fcntl.h>
-# include <readline/history.h>
-# include <readline/readline.h>
-# include <signal.h>
-# include <stdbool.h>
 # include <stdio.h>
 # include <stdlib.h>
-# include <string.h>
-# include <sys/wait.h>
 # include <unistd.h>
+# include <fcntl.h>
+# include <string.h>
+# include <errno.h>
+# include <signal.h>
+# include <sys/wait.h>
+# include <sys/stat.h>
+# include <readline/readline.h>
+# include <readline/history.h>
+# include <stdbool.h>
+# include <sys/types.h>
 
 # define ERR_GENERAL 1
 # define ERR_CMD_NOT_FOUND 127
 # define ERR_NOT_EXEC 126
 # define ERR_SYNTAX 2
 # define ERR_REDIR_FAIL 1
+# define ERR_SIGNAL_BASE 128
 
 /***********************************/
 /*==========TOKEN STRUCT==========*/
@@ -91,7 +94,15 @@ typedef struct s_shell
 {
 	char			**env;
 	int				last_exit_status;
+	t_token_list	*current_tokens;
 }					t_shell;
+
+typedef struct s_expand_ctx
+{
+	char	*result;
+	int		result_len;
+	char	*start;
+}					t_expand_ctx;
 
 /********************************/
 /*==========TOKENIZER==========*/
@@ -145,6 +156,9 @@ t_token_list		*init_token_list(void);
 
 void				expand_token_list(t_shell *sh, t_token *token);
 char				*expand_token(t_shell *sh, t_token *token);
+void				expand_double_quoted_vars(t_shell *sh, t_token *token);
+int					process_var_segment(t_shell *sh, char *s, int i, t_expand_ctx *ctx);
+void				copy_text_segment(char *start, char *end, char *result, int *result_len);
 char				*ft_strtrim(const char *s1, const char *set);
 
 /******************************/

@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   token_quotes.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
+/*   By: julien <julien@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 11:00:31 by julien            #+#    #+#             */
-/*   Updated: 2025/04/22 15:36:30 by jbanchon         ###   ########.fr       */
+/*   Updated: 2025/04/22 21:51:27 by julien           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../../include/minishell.h"
 
-// Fonction pour supprimer les quotes internes
+// Fonction pour supprimer les quotes externes tout en préservant les quotes imbriquées
 char	*remove_quotes(const char *s)
 {
 	char	*res;
@@ -28,19 +28,24 @@ char	*remove_quotes(const char *s)
 		return (NULL);
 	while (s[i])
 	{
-		if (s[i] == '"' || s[i] == '\'')
+		// Si on rencontre un guillemet externe (non imbriqué)
+		if ((s[i] == '"' || s[i] == '\'') && (quote == 0 || quote == s[i]))
 		{
 			if (quote == 0)
-				quote = s[i];
+				quote = s[i];  // On entre dans un bloc guillemet
 			else if (quote == s[i])
-				quote = 0;
+				quote = 0;     // On sort du bloc guillemet
 			i++;
 		}
+		// Si on rencontre un guillemet imbriqué, on le préserve
+		else if ((s[i] == '"' && quote == '\'') || (s[i] == '\'' && quote == '"'))
+		{
+			res[j++] = s[i++];  // On copie le guillemet imbriqué
+		}
+		// Pour tous les autres caractères
 		else
 		{
-			res[j] = s[i];
-			j++;
-			i++;
+			res[j++] = s[i++];
 		}
 	}
 	res[j] = '\0';
@@ -53,25 +58,33 @@ static void	handle_single_quote(char *input, int *i, t_token_list *tokens)
 	char	buffer[1024];
 	int		len;
 	int		start;
-	char	*content;
+	char	*final_content;
 
 	len = 0;
 	(*i)++;
 	start = *i;
+	// Ajouter le guillemet simple ouvrant au début du buffer
+	buffer[len++] = '\'';
+	
 	while (input[*i] && input[*i] != '\'')
 		(*i)++;
 	if (input[*i] == '\'')
 	{
-		while (start < *i && len < 1023)
+		while (start < *i && len < 1022)
 			buffer[len++] = input[start++];
 		(*i)++;
+		
+		// Ajouter le guillemet simple fermant à la fin du buffer
+		buffer[len++] = '\'';
+		
 		while (input[*i] && !ft_isspace(input[*i])
 			&& !is_token_breaker(input[*i]) && len < 1023)
 			buffer[len++] = input[(*i)++];
 		buffer[len] = '\0';
-		content = remove_quotes(buffer);
-		add_token(tokens, content ? content : ft_strdup(buffer), STRING, 1);
-		free(content);
+		
+		// Pass SINGLE_QUOTE as the quote state to ensure variables aren't expanded
+		final_content = ft_strdup(buffer);
+		add_token(tokens, final_content, STRING, SINGLE_QUOTE);
 	}
 }
 
@@ -114,7 +127,7 @@ static void	handle_double_quotes(char *input, int *i, t_token_list *tokens)
 				final_content = remove_quotes(buffer);
 				add_token(tokens,
 					final_content ? final_content : ft_strdup(buffer), STRING,
-					1);
+					DOUBLE_QUOTE);
 				free(final_content);
 			}
 		}

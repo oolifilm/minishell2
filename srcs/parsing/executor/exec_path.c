@@ -20,30 +20,64 @@ char	*get_path(char *cmd)
 	int		i;
 	char	*tmp;
 
+	// Si la commande est NULL ou vide, elle n'existe pas
+	if (!cmd || cmd[0] == '\0')
+	{
+		errno = ENOENT;
+		return (NULL);
+	}
+
+	// Si c'est un chemin avec '/'
+	if (ft_strchr(cmd, '/'))
+	{
+		// Vérifier si le fichier existe et est exécutable
+		if (access(cmd, F_OK) == 0)
+		{
+			if (access(cmd, X_OK) == 0)
+				return (ft_strdup(cmd));
+			// Le fichier existe mais n'est pas exécutable
+			errno = EACCES;
+			return (NULL);
+		}
+		// Le fichier n'existe pas
+		errno = ENOENT;
+		return (NULL);
+	}
+
+	// Rechercher dans les chemins du PATH
 	path = getenv("PATH");
 	if (!path)
+	{
+		errno = ENOENT;
 		return (NULL);
-	i = 0;
-	if (ft_strchr(cmd, '/'))
-		return (ft_strdup(cmd));
+	}
+
 	path_split = ft_split(path, ':');
 	if (!path_split)
+	{
+		errno = ENOENT;
 		return (NULL);
+	}
+
+	i = 0;
 	while (path_split[i])
 	{
 		tmp = ft_strjoin(path_split[i], "/");
 		if (!tmp)
-			break ;
+			break;
 		path_cmd = ft_strjoin(tmp, cmd);
 		free(tmp);
 		if (!path_cmd)
-			break ;
+			break;
 		if (access(path_cmd, X_OK) == 0)
 			return (ft_free_split(path_split), path_cmd);
 		free(path_cmd);
 		i++;
 	}
 	ft_free_split(path_split);
+	
+	// Si on arrive ici, la commande n'existe pas
+	errno = ENOENT;
 	return (NULL);
 }
 

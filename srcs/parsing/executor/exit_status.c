@@ -38,7 +38,6 @@ char	*get_env_value(char **env, const char *key)
 	i = 0;
 	while (env[i])
 	{
-		printf("env[%d] = %s\n", i, env[i]);
 		if (ft_strncmp(env[i], key, key_len) == 0 && env[i][key_len] == '=')
 			return (ft_strdup(env[i] + key_len + 1));
 		i++;

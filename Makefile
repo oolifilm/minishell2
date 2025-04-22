@@ -24,6 +24,8 @@ SRC			=	srcs/parsing/tokenizer/tokenizer.c \
 				srcs/parsing/tokenizer/double_quoted.c \
 				srcs/parsing/tokenizer/token_is_redir.c \
 				srcs/parsing/tokenizer/token_expand.c \
+				srcs/parsing/tokenizer/token_expand_dquote.c \
+				srcs/parsing/tokenizer/token_expand_dquote2.c \
 				srcs/parsing/tokenizer/quotes_utils.c \
 				srcs/parsing/parser/parsing_utils.c \
 				srcs/parsing/parser/parsing.c \

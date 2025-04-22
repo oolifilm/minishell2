@@ -39,8 +39,12 @@ char	**fill_argv(t_shell *sh, t_token *token, char **argv)
 		if (cur->type == STRING || cur->type == ARG || cur->type == ENV
 			|| cur->type == EXIT)
 		{
-			argv[i] = expand_token(sh, cur);
-			// printf("argv[%d] = '%s'\n", i, argv[i]);
+			// Ne pas expanser les tokens venant de guillemets simples
+			if (cur->quote_state == SINGLE_QUOTE)
+				argv[i] = ft_strdup(cur->input);
+			else
+				argv[i] = expand_token(sh, cur);
+			
 			i++;
 		}
 		cur = cur->next;

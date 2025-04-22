@@ -81,14 +81,20 @@ static void	process_tokens(char *input, t_token_list *tokens, int *i,
 	(void)is_first_word;
 	while (*i < (int)len)
 	{
+		// On est dans un bloc de guillemets - collecter tous les caractères jusqu'au guillemet fermant du même type
 		if (in_quotes)
 		{
+			// On ne sort des guillemets que si on trouve le même type de guillemet
+			// Un guillemet différent est traité comme un caractère littéral
 			if (input[*i] == quote_type)
 				in_quotes = 0;
+			
 			buffer[buffer_len++] = input[*i];
 			(*i)++;
 			continue ;
 		}
+		
+		// Détection du début d'un bloc de guillemets
 		if (input[*i] == '\'' || input[*i] == '"')
 		{
 			in_quotes = 1;
@@ -97,6 +103,7 @@ static void	process_tokens(char *input, t_token_list *tokens, int *i,
 			(*i)++;
 			continue ;
 		}
+		
 		if (input[*i] == '$')
 		{
 			if (buffer_len > 0)
@@ -104,9 +111,9 @@ static void	process_tokens(char *input, t_token_list *tokens, int *i,
 				buffer[buffer_len] = '\0';
 				processed = remove_quotes(buffer);
 				current_quote_state = NO_QUOTE;
-				if (quote_type == '\'')
+				if (ft_strchr(buffer, '\'') == buffer && ft_strrchr(buffer, '\'') == buffer + ft_strlen(buffer) - 1)
 					current_quote_state = SINGLE_QUOTE;
-				else if (quote_type == '"')
+				else if (ft_strchr(buffer, '"') == buffer && ft_strrchr(buffer, '"') == buffer + ft_strlen(buffer) - 1)
 					current_quote_state = DOUBLE_QUOTE;
 				add_token(tokens, processed, STRING, current_quote_state);
 				buffer_len = 0;
@@ -120,9 +127,9 @@ static void	process_tokens(char *input, t_token_list *tokens, int *i,
 				buffer[buffer_len] = '\0';
 				processed = remove_quotes(buffer);
 				current_quote_state = NO_QUOTE;
-				if (quote_type == '\'')
+				if (ft_strchr(buffer, '\'') == buffer && ft_strrchr(buffer, '\'') == buffer + ft_strlen(buffer) - 1)
 					current_quote_state = SINGLE_QUOTE;
-				else if (quote_type == '"')
+				else if (ft_strchr(buffer, '"') == buffer && ft_strrchr(buffer, '"') == buffer + ft_strlen(buffer) - 1)
 					current_quote_state = DOUBLE_QUOTE;
 				add_token(tokens, processed, STRING, current_quote_state);
 				buffer_len = 0;
@@ -137,9 +144,9 @@ static void	process_tokens(char *input, t_token_list *tokens, int *i,
 				buffer[buffer_len] = '\0';
 				processed = remove_quotes(buffer);
 				current_quote_state = NO_QUOTE;
-				if (quote_type == '\'')
+				if (ft_strchr(buffer, '\'') == buffer && ft_strrchr(buffer, '\'') == buffer + ft_strlen(buffer) - 1)
 					current_quote_state = SINGLE_QUOTE;
-				else if (quote_type == '"')
+				else if (ft_strchr(buffer, '"') == buffer && ft_strrchr(buffer, '"') == buffer + ft_strlen(buffer) - 1)
 					current_quote_state = DOUBLE_QUOTE;
 				add_token(tokens, processed, STRING, current_quote_state);
 				buffer_len = 0;
@@ -153,9 +160,9 @@ static void	process_tokens(char *input, t_token_list *tokens, int *i,
 				buffer[buffer_len] = '\0';
 				processed = remove_quotes(buffer);
 				current_quote_state = NO_QUOTE;
-				if (quote_type == '\'')
+				if (ft_strchr(buffer, '\'') == buffer && ft_strrchr(buffer, '\'') == buffer + ft_strlen(buffer) - 1)
 					current_quote_state = SINGLE_QUOTE;
-				else if (quote_type == '"')
+				else if (ft_strchr(buffer, '"') == buffer && ft_strrchr(buffer, '"') == buffer + ft_strlen(buffer) - 1)
 					current_quote_state = DOUBLE_QUOTE;
 				add_token(tokens, processed, STRING, current_quote_state);
 				buffer_len = 0;
@@ -164,17 +171,8 @@ static void	process_tokens(char *input, t_token_list *tokens, int *i,
 		}
 		else
 		{
-			if (input[*i] == '\\' && input[*i + 1])
-			{
-				(*i)++;
-				buffer[buffer_len++] = input[*i];
-				(*i)++;
-			}
-			else
-			{
-				buffer[buffer_len++] = input[*i];
-				(*i)++;
-			}
+			buffer[buffer_len++] = input[*i];
+			(*i)++;
 		}
 	}
 	if (buffer_len > 0)
@@ -182,9 +180,9 @@ static void	process_tokens(char *input, t_token_list *tokens, int *i,
 		buffer[buffer_len] = '\0';
 		processed = remove_quotes(buffer);
 		current_quote_state = NO_QUOTE;
-		if (quote_type == '\'')
+		if (ft_strchr(buffer, '\'') == buffer && ft_strrchr(buffer, '\'') == buffer + ft_strlen(buffer) - 1)
 			current_quote_state = SINGLE_QUOTE;
-		else if (quote_type == '"')
+		else if (ft_strchr(buffer, '"') == buffer && ft_strrchr(buffer, '"') == buffer + ft_strlen(buffer) - 1)
 			current_quote_state = DOUBLE_QUOTE;
 		add_token(tokens, processed, STRING, current_quote_state);
 	}

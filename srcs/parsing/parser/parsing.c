@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
+/*   By: julien <julien@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/10 15:27:16 by leaugust          #+#    #+#             */
-/*   Updated: 2025/04/22 16:43:56 by jbanchon         ###   ########.fr       */
+/*   Updated: 2025/04/22 23:03:23 by julien           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,21 +96,25 @@ int	has_invalid_redirection(t_token *tokens)
 
 int	has_unclosed_quote(char *input)
 {
-	int	single_quote;
-	int	double_quote;
+	int	in_single_quote;
+	int	in_double_quote;
 
-	single_quote = 0;
-	double_quote = 0;
+	in_single_quote = 0;
+	in_double_quote = 0;
 	while (*input)
 	{
-		if (*input == '\'')
-			single_quote = !single_quote;
-		if (*input == '"')
-			double_quote = !double_quote;
+		// Si on rencontre un guillemet simple et qu'on n'est pas entre guillemets doubles
+		if (*input == '\'' && !in_double_quote)
+			in_single_quote = !in_single_quote;
+		// Si on rencontre un guillemet double et qu'on n'est pas entre guillemets simples
+		else if (*input == '"' && !in_single_quote)
+			in_double_quote = !in_double_quote;
 		input++;
 	}
-	if (single_quote || double_quote)
+	// Si l'un des guillemets reste ouvert, c'est une erreur
+	if (in_single_quote || in_double_quote)
 	{
+		printf("[ERROR] Lexer found an unclosed quote.\n");
 		return (1);
 	}
 	return (0);

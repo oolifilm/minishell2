@@ -15,10 +15,10 @@
 int	get_exec_err_code(void)
 {
 	if (errno == ENOENT)
-		return (127);
+		return (ERR_CMD_NOT_FOUND);
 	if (errno == EACCES)
-		return (126);
-	return (1);
+		return (ERR_NOT_EXEC);
+	return (ERR_GENERAL);
 }
 
 void	print_exec_err(char *cmd)
@@ -47,7 +47,7 @@ int	handle_path_error(char *shell, char *cmd)
 	ft_putstr_fd(": ", STDERR_FILENO);
 	ft_putstr_fd(cmd, STDERR_FILENO);
 	ft_putstr_fd(": command not found\n", STDERR_FILENO);
-	return (127);
+	return (ERR_CMD_NOT_FOUND);
 }
 
 int	handle_exit_status(t_shell *sh, int status, char *cmd)
@@ -70,10 +70,10 @@ int	handle_exit_status(t_shell *sh, int status, char *cmd)
 			ft_putstr_fd("\n", STDERR_FILENO);
 		else if (sig == SIGQUIT)
 			ft_putstr_fd("Quit: 3\n", STDERR_FILENO);
-		code = 128 + sig;
+		code = ERR_SIGNAL_BASE + sig;
 		set_exit_code(sh, code);
 		return (code);
 	}
-	set_exit_code(sh, code);
-	return (1);
+	set_exit_code(sh, ERR_GENERAL);
+	return (ERR_GENERAL);
 }
