@@ -24,41 +24,81 @@ void	assign_pipe(char input, t_token_list *tokens)
 
 void	assign_dollar(char *input, int *i, t_token_list *tokens)
 {
-	char	var_name[256];
+	char	token[1024];
 	int		j;
-	int		quote_type;
+	int		is_valid_var;
 
-	quote_type = NO_QUOTE;
+	// Avancer au-delà du $
 	(*i)++;
-	if (input[*i] == '\'')
-	{
-		quote_type = SINGLE_QUOTE;
-		(*i)++;
-	}
+	
+	// Traitement de $? (statut de sortie) suivi potentiellement par d'autres caractères
 	if (input[*i] == '?')
 	{
-		add_token(tokens, "?", EXIT, NO_QUOTE);
+		j = 0;
+		token[j++] = '?';
 		(*i)++;
-		return ;
+		
+		// Capturer des caractères qui suivent $?, comme $ ou autres
+		while (input[*i] && !ft_isspace(input[*i]) && 
+			input[*i] != '|' && input[*i] != '<' && input[*i] != '>' && 
+			input[*i] != '\'' && input[*i] != '"')
+		{
+			token[j++] = input[*i];
+			(*i)++;
+		}
+		token[j] = '\0';
+		
+		add_token(tokens, ft_strdup(token), EXIT, NO_QUOTE);
+		return;
 	}
+	
+	// Traitement de $$ (PID)
 	if (input[*i] == '$')
 	{
-		add_token(tokens, "$", STRING, quote_type);
+		token[0] = '$';
 		(*i)++;
-		return ;
+		add_token(tokens, ft_strdup("$"), STRING, NO_QUOTE);
+		return;
 	}
+	
+	// Vérifier si le caractère après $ peut commencer un nom de variable
+	is_valid_var = (ft_isalpha(input[*i]) || input[*i] == '_');
+	
+	// Si pas valide, traiter comme un $ littéral suivi du caractère
+	if (!is_valid_var)
+	{
+		if (!input[*i] || ft_isspace(input[*i]) || 
+			input[*i] == '|' || input[*i] == '<' || input[*i] == '>')
+		{
+			// Cas du $ seul
+			add_token(tokens, ft_strdup("$"), STRING, NO_QUOTE);
+		}
+		else
+		{
+			// Cas des caractères spéciaux ($:, $=, etc.)
+			j = 0;
+			token[j++] = '$';
+			token[j++] = input[*i];
+			token[j] = '\0';
+			(*i)++;
+			add_token(tokens, ft_strdup(token), STRING, NO_QUOTE);
+		}
+		return;
+	}
+	
+	// Cas d'une variable valide ($VAR)
 	j = 0;
 	while (input[*i] && (ft_isalnum(input[*i]) || input[*i] == '_') && j < 255)
 	{
-		var_name[j] = input[*i];
-		j++;
+		token[j++] = input[*i];
 		(*i)++;
 	}
-	var_name[j] = '\0';
-	if (j == 0)
-		add_token(tokens, "$", STRING, quote_type);
+	token[j] = '\0';
+	
+	if (j > 0)
+		add_token(tokens, ft_strdup(token), ENV, NO_QUOTE);
 	else
-		add_token(tokens, var_name, ENV, quote_type);
+		add_token(tokens, ft_strdup("$"), STRING, NO_QUOTE);
 }
 
 /* Extrait le nom d'une variable d'environnement à partir d'une chaîne input. */

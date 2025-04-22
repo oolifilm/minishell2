@@ -17,11 +17,18 @@ LIBFTDIR 	=	libft
 LDFLAGS 	=	-lreadline -L$(LIBFTDIR) -lft -L/opt/homebrew/opt/readline/lib
 
 SRC			=	srcs/parsing/tokenizer/tokenizer.c \
+				srcs/parsing/tokenizer/tokenizer_buffer.c \
+				srcs/parsing/tokenizer/tokenizer_chars.c \
+				srcs/parsing/tokenizer/tokenizer_utils.c \
+				srcs/parsing/tokenizer/tokenizer_process.c \
 				srcs/parsing/tokenizer/token_utils.c \
 				srcs/parsing/tokenizer/token_operators.c \
 				srcs/parsing/tokenizer/token_quotes.c \
 				srcs/parsing/tokenizer/token_command.c \
 				srcs/parsing/tokenizer/double_quoted.c \
+				srcs/parsing/tokenizer/double_quoted_len.c \
+				srcs/parsing/tokenizer/double_quoted_utils.c \
+				srcs/parsing/tokenizer/double_quoted_copy.c \
 				srcs/parsing/tokenizer/token_is_redir.c \
 				srcs/parsing/tokenizer/token_expand.c \
 				srcs/parsing/tokenizer/token_expand_dquote.c \
@@ -37,6 +44,7 @@ SRC			=	srcs/parsing/tokenizer/tokenizer.c \
 				srcs/parsing/executor/handle_error.c \
 				srcs/builtins/ft_cd.c \
 				srcs/builtins/ft_echo.c \
+				srcs/builtins/ft_echo_utils.c \
 				srcs/builtins/ft_env.c \
 				srcs/builtins/ft_exit.c \
 				srcs/builtins/export/ft_export.c \

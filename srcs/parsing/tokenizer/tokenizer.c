@@ -3,33 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: leaugust <leaugust@student.42.fr>          +#+  +:+       +#+        */
+/*   By: julien <julien@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 17:46:05 by jbanchon          #+#    #+#             */
-/*   Updated: 2025/04/18 19:43:48 by leaugust         ###   ########.fr       */
+/*   Updated: 2025/04/22 23:34:03 by julien           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../../include/minishell.h"
-
-int	is_ignored_char(char c)
-{
-	return (c == ' ' || c == '\t' || c == '\n' || c == ':' || c == '!');
-}
-
-int	is_ignorable_input(const char *line)
-{
-	int	i;
-
-	i = 0;
-	while (line[i])
-	{
-		if (!is_ignored_char(line[i]))
-			return (0);
-		i++;
-	}
-	return (1);
-}
 
 /* Initialise une nouvelle liste chaînée
 de tokens (t_token_list). */
@@ -44,148 +25,6 @@ t_token_list	*init_token_list(void)
 	tokens->head = NULL;
 	tokens->cur = NULL;
 	return (tokens);
-}
-
-/* Analyse la chaîne de caractères input et la
-transforme en une liste chaînée de tokens (t_token_list).*/
-
-static int	init_tokenizer(char *input, t_token_list **tokens, int *i)
-{
-	if (has_unclosed_quote(input))
-	{
-		printf("[ERROR] Lexer found an unclosed quote.\n");
-		return (0);
-	}
-	*tokens = init_token_list();
-	*i = 0;
-	skip_spaces(input, i);
-	return (1);
-}
-
-static void	process_tokens(char *input, t_token_list *tokens, int *i,
-		int *is_first_word)
-{
-	size_t			len;
-	char			buffer[1024];
-	int				buffer_len;
-	int				in_quotes;
-	char			quote_type;
-	char			*processed;
-	t_quote_state	current_quote_state;
-
-	len = ft_strlen(input);
-	buffer_len = 0;
-	in_quotes = 0;
-	quote_type = 0;
-	buffer[0] = '\0';
-	(void)is_first_word;
-	while (*i < (int)len)
-	{
-		// On est dans un bloc de guillemets - collecter tous les caractères jusqu'au guillemet fermant du même type
-		if (in_quotes)
-		{
-			// On ne sort des guillemets que si on trouve le même type de guillemet
-			// Un guillemet différent est traité comme un caractère littéral
-			if (input[*i] == quote_type)
-				in_quotes = 0;
-			
-			buffer[buffer_len++] = input[*i];
-			(*i)++;
-			continue ;
-		}
-		
-		// Détection du début d'un bloc de guillemets
-		if (input[*i] == '\'' || input[*i] == '"')
-		{
-			in_quotes = 1;
-			quote_type = input[*i];
-			buffer[buffer_len++] = input[*i];
-			(*i)++;
-			continue ;
-		}
-		
-		if (input[*i] == '$')
-		{
-			if (buffer_len > 0)
-			{
-				buffer[buffer_len] = '\0';
-				processed = remove_quotes(buffer);
-				current_quote_state = NO_QUOTE;
-				if (ft_strchr(buffer, '\'') == buffer && ft_strrchr(buffer, '\'') == buffer + ft_strlen(buffer) - 1)
-					current_quote_state = SINGLE_QUOTE;
-				else if (ft_strchr(buffer, '"') == buffer && ft_strrchr(buffer, '"') == buffer + ft_strlen(buffer) - 1)
-					current_quote_state = DOUBLE_QUOTE;
-				add_token(tokens, processed, STRING, current_quote_state);
-				buffer_len = 0;
-			}
-			assign_dollar(input, i, tokens);
-		}
-		else if (input[*i] == '|')
-		{
-			if (buffer_len > 0)
-			{
-				buffer[buffer_len] = '\0';
-				processed = remove_quotes(buffer);
-				current_quote_state = NO_QUOTE;
-				if (ft_strchr(buffer, '\'') == buffer && ft_strrchr(buffer, '\'') == buffer + ft_strlen(buffer) - 1)
-					current_quote_state = SINGLE_QUOTE;
-				else if (ft_strchr(buffer, '"') == buffer && ft_strrchr(buffer, '"') == buffer + ft_strlen(buffer) - 1)
-					current_quote_state = DOUBLE_QUOTE;
-				add_token(tokens, processed, STRING, current_quote_state);
-				buffer_len = 0;
-			}
-			assign_pipe(input[*i], tokens);
-			(*i)++;
-		}
-		else if (input[*i] == '<' || input[*i] == '>')
-		{
-			if (buffer_len > 0)
-			{
-				buffer[buffer_len] = '\0';
-				processed = remove_quotes(buffer);
-				current_quote_state = NO_QUOTE;
-				if (ft_strchr(buffer, '\'') == buffer && ft_strrchr(buffer, '\'') == buffer + ft_strlen(buffer) - 1)
-					current_quote_state = SINGLE_QUOTE;
-				else if (ft_strchr(buffer, '"') == buffer && ft_strrchr(buffer, '"') == buffer + ft_strlen(buffer) - 1)
-					current_quote_state = DOUBLE_QUOTE;
-				add_token(tokens, processed, STRING, current_quote_state);
-				buffer_len = 0;
-			}
-			assign_redirection(input, i, tokens);
-		}
-		else if (ft_isspace(input[*i]))
-		{
-			if (buffer_len > 0)
-			{
-				buffer[buffer_len] = '\0';
-				processed = remove_quotes(buffer);
-				current_quote_state = NO_QUOTE;
-				if (ft_strchr(buffer, '\'') == buffer && ft_strrchr(buffer, '\'') == buffer + ft_strlen(buffer) - 1)
-					current_quote_state = SINGLE_QUOTE;
-				else if (ft_strchr(buffer, '"') == buffer && ft_strrchr(buffer, '"') == buffer + ft_strlen(buffer) - 1)
-					current_quote_state = DOUBLE_QUOTE;
-				add_token(tokens, processed, STRING, current_quote_state);
-				buffer_len = 0;
-			}
-			skip_spaces(input, i);
-		}
-		else
-		{
-			buffer[buffer_len++] = input[*i];
-			(*i)++;
-		}
-	}
-	if (buffer_len > 0)
-	{
-		buffer[buffer_len] = '\0';
-		processed = remove_quotes(buffer);
-		current_quote_state = NO_QUOTE;
-		if (ft_strchr(buffer, '\'') == buffer && ft_strrchr(buffer, '\'') == buffer + ft_strlen(buffer) - 1)
-			current_quote_state = SINGLE_QUOTE;
-		else if (ft_strchr(buffer, '"') == buffer && ft_strrchr(buffer, '"') == buffer + ft_strlen(buffer) - 1)
-			current_quote_state = DOUBLE_QUOTE;
-		add_token(tokens, processed, STRING, current_quote_state);
-	}
 }
 
 void	assign_cmd_types(t_token *token)

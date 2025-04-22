@@ -6,7 +6,7 @@
 /*   By: julien <julien@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 11:00:31 by julien            #+#    #+#             */
-/*   Updated: 2025/04/22 21:51:27 by julien           ###   ########.fr       */
+/*   Updated: 2025/04/22 23:37:49 by julien           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,9 +63,7 @@ static void	handle_single_quote(char *input, int *i, t_token_list *tokens)
 	len = 0;
 	(*i)++;
 	start = *i;
-	// Ajouter le guillemet simple ouvrant au début du buffer
 	buffer[len++] = '\'';
-	
 	while (input[*i] && input[*i] != '\'')
 		(*i)++;
 	if (input[*i] == '\'')
@@ -73,16 +71,11 @@ static void	handle_single_quote(char *input, int *i, t_token_list *tokens)
 		while (start < *i && len < 1022)
 			buffer[len++] = input[start++];
 		(*i)++;
-		
-		// Ajouter le guillemet simple fermant à la fin du buffer
 		buffer[len++] = '\'';
-		
 		while (input[*i] && !ft_isspace(input[*i])
 			&& !is_token_breaker(input[*i]) && len < 1023)
 			buffer[len++] = input[(*i)++];
 		buffer[len] = '\0';
-		
-		// Pass SINGLE_QUOTE as the quote state to ensure variables aren't expanded
 		final_content = ft_strdup(buffer);
 		add_token(tokens, final_content, STRING, SINGLE_QUOTE);
 	}

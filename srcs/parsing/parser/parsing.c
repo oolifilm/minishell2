@@ -6,7 +6,7 @@
 /*   By: julien <julien@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/10 15:27:16 by leaugust          #+#    #+#             */
-/*   Updated: 2025/04/22 23:03:23 by julien           ###   ########.fr       */
+/*   Updated: 2025/04/22 23:35:00 by julien           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,15 +103,12 @@ int	has_unclosed_quote(char *input)
 	in_double_quote = 0;
 	while (*input)
 	{
-		// Si on rencontre un guillemet simple et qu'on n'est pas entre guillemets doubles
 		if (*input == '\'' && !in_double_quote)
 			in_single_quote = !in_single_quote;
-		// Si on rencontre un guillemet double et qu'on n'est pas entre guillemets simples
 		else if (*input == '"' && !in_single_quote)
 			in_double_quote = !in_double_quote;
 		input++;
 	}
-	// Si l'un des guillemets reste ouvert, c'est une erreur
 	if (in_single_quote || in_double_quote)
 	{
 		printf("[ERROR] Lexer found an unclosed quote.\n");

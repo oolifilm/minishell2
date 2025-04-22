@@ -5,153 +5,102 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: julien <julien@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/28 14:14:58 by jbanchon          #+#    #+#             */
-/*   Updated: 2025/04/22 22:40:14 by julien           ###   ########.fr       */
+/*   Created: 2025/04/11 21:28:18 by julien            #+#    #+#             */
+/*   Updated: 2025/04/23 01:05:46 by julien           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-static int	ft_strequ(const char *s1, const char *s2)
-{
-	if (!s1 || !s2)
-		return (0);
-	while (*s1 && *s2)
-	{
-		if (*s1 != *s2)
-			return (0);
-		s1++;
-		s2++;
-	}
-	return (*s1 == *s2);
-}
-
-static int	is_echo_option_n(char *str)
+// Vérifie si l'argument est l'option -n
+int	is_echo_option_n(char *arg)
 {
 	int	i;
 
-	i = 0;
-	if (str[i++] != '-')
+	if (!arg || arg[0] != '-')
 		return (0);
-	if (str[i] == '\0')
+	i = 1;
+	if (!arg[i])
 		return (0);
-	while (str[i])
+	while (arg[i])
 	{
-		if (str[i++] != 'n')
+		if (arg[i] != 'n')
 			return (0);
+		i++;
 	}
 	return (1);
 }
 
-int	ft_echo(t_shell *sh, char **argv)
+// Traite un token qui commence par $ avec gestion de $?, $VAR, etc.
+void	handle_dollar_token(t_shell *sh, char *token, int is_with_token)
 {
-	int		i;
-	int		newline;
 	char	*expanded_value;
-	t_token	*cur_token;
 
-	i = 1;
-	newline = 1;
-	(void)sh;
-	while (argv[i] && is_echo_option_n(argv[i]))
+	if (ft_isalpha(token[1]) || token[1] == '_')
 	{
-		newline = 0;
-		i++;
+		expanded_value = get_env_value(sh->env, token + 1);
+		if (expanded_value)
+		{
+			ft_putstr_fd(expanded_value, STDOUT_FILENO);
+			free(expanded_value);
+		}
+		else if (!is_with_token)
+			ft_putstr_fd("$", STDOUT_FILENO);
 	}
+	else if (token[1] == '?') 
+	{
+		char *exit_status = ft_itoa(sh->last_exit_status);
+		ft_putstr_fd(exit_status, STDOUT_FILENO);
+		free(exit_status);
+		if (token[2] != '\0')
+			ft_putstr_fd(token + 2, STDOUT_FILENO);
+	}
+	else
+		ft_putstr_fd(token, STDOUT_FILENO);
+}
+
+// Traite un token avec ses règles spécifiques (guillemets simples, etc.)
+void	process_token(t_shell *sh, char *token, t_token **cur_token_ptr)
+{
+	if (*cur_token_ptr && ft_strcmp((*cur_token_ptr)->input, token) == 0)
+		process_token_with_info(sh, token, cur_token_ptr);
+	else
+		process_token_without_info(sh, token);
+}
+
+// Process arguments pour la commande echo
+int	process_echo_args(t_shell *sh, char **argv, int i, int newline)
+{
+	t_token *cur_token;
 	
-	// Retrouver le premier token après le nom de la commande
-	cur_token = NULL;
-	if (sh->current_tokens && sh->current_tokens->head)
-	{
-		cur_token = sh->current_tokens->head;
-		// Skip 'echo' command
-		if (cur_token) 
-			cur_token = cur_token->next;
-		
-		// Skip echo options '-n'
-		while (cur_token && is_echo_option_n(cur_token->input))
-			cur_token = cur_token->next;
-	}
-
+	cur_token = find_first_valid_token(sh, i);
 	while (argv[i])
 	{
-		// Si nous avons le token correspondant, utiliser son quote_state
-		if (cur_token && ft_strcmp(cur_token->input, argv[i]) == 0)
-		{
-			// Si le token vient de guillemets simples, ne pas expanser
-			if (cur_token->quote_state == SINGLE_QUOTE)
-			{
-				ft_putstr_fd(argv[i], STDOUT_FILENO);
-				cur_token = cur_token->next;
-			}
-			else if (ft_strcmp(argv[i], "$") == 0)
-			{
-				ft_putstr_fd("$", STDOUT_FILENO);
-				cur_token = cur_token->next;
-			}
-			else if (argv[i][0] == '$')
-			{
-				if (ft_isalpha(argv[i][1]) || argv[i][1] == '_')
-				{
-					expanded_value = get_env_value(sh->env, argv[i] + 1);
-					if (expanded_value)
-					{
-						ft_putstr_fd(expanded_value, STDOUT_FILENO);
-						free(expanded_value);
-					}
-					else
-						ft_putstr_fd("$", STDOUT_FILENO);
-				}
-				else
-					ft_putstr_fd("$", STDOUT_FILENO);
-				cur_token = cur_token->next;
-			}
-			else
-			{
-				ft_putstr_fd(argv[i], STDOUT_FILENO);
-				cur_token = cur_token->next;
-			}
-		}
-		// Sinon, utiliser l'ancienne logique
-		else
-		{
-			if (argv[i][0] == '\'' && argv[i][ft_strlen(argv[i]) - 1] == '\'')
-			{
-				char *content = ft_substr(argv[i], 1, ft_strlen(argv[i]) - 2);
-				ft_putstr_fd(content, STDOUT_FILENO);
-				free(content);
-			}
-			else if (ft_strcmp(argv[i], "$") == 0)
-				ft_putstr_fd("$", STDOUT_FILENO);
-			else if (argv[i][0] == '$')
-			{
-				if (ft_isalpha(argv[i][1]) || argv[i][1] == '_')
-				{
-					expanded_value = get_env_value(sh->env, argv[i] + 1);
-					if (expanded_value)
-					{
-						ft_putstr_fd(expanded_value, STDOUT_FILENO);
-						free(expanded_value);
-					}
-					else
-						ft_putstr_fd("$", STDOUT_FILENO);
-				}
-				else
-					ft_putstr_fd("$", STDOUT_FILENO);
-			}
-			else
-			{
-				ft_putstr_fd(argv[i], STDOUT_FILENO);
-			}
-		}
+		process_token(sh, argv[i], &cur_token);
 		
-		if (argv[i + 1] && !(ft_strequ(argv[i], "[") || ft_strequ(argv[i + 1],
-					"]")) && !ft_strequ(argv[i + 1], "%"))
+		if (should_add_space(argv, i))
 			ft_putstr_fd(" ", STDOUT_FILENO);
 		i++;
 	}
 	if (newline)
 		ft_putstr_fd("\n", STDOUT_FILENO);
+	return (0);
+}
+
+// La fonction principale echo
+int	ft_echo(t_shell *sh, char **argv)
+{
+	int		i;
+	int		newline;
+	
+	i = 1;
+	newline = 1;
+	while (argv[i] && is_echo_option_n(argv[i]))
+	{
+		newline = 0;
+		i++;
+	}
+	process_echo_args(sh, argv, i, newline);
 	sh->last_exit_status = 0;
 	return (0);
 }

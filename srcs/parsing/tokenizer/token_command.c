@@ -60,22 +60,54 @@ de l'entrée input lorsqu'un $ est rencontré. */
 void	assign_env_var(char *input, int *i, t_token_list *tokens)
 {
 	char	var_name[256];
+	char	full_token[1024];
 	int		j;
+	int		is_exit_status;
 
 	j = 0;
 	(*i)++;
+	is_exit_status = 0;
 	if (input[*i] == '?')
 	{
-		add_token(tokens, ft_strdup("?"), EXIT, NO_QUOTE);
+		var_name[j++] = '?';
 		(*i)++;
-		return ;
+		is_exit_status = 1;
 	}
-	while (input[*i] && (ft_isalnum(input[*i]) || input[*i] == '_'))
+	else
 	{
-		var_name[j++] = input[*i];
-		(*i)++;
+		while (input[*i] && (ft_isalnum(input[*i]) || input[*i] == '_'))
+		{
+			var_name[j++] = input[*i];
+			(*i)++;
+		}
 	}
 	var_name[j] = '\0';
+	
+	// Si on a juste $? sans texte après, on crée un token simple
+	if (is_exit_status && !input[*i])
+	{
+		add_token(tokens, ft_strdup("?"), EXIT, NO_QUOTE);
+		return;
+	}
+	
+	// Si on a $? suivi de texte, on crée un token combiné
+	if (is_exit_status)
+	{
+		// Capture le reste du mot jusqu'au prochain séparateur
+		j = 0;
+		ft_strlcpy(full_token, "?", sizeof(full_token));
+		while (input[*i] && !is_special_char(input[*i]))
+		{
+			full_token[j + 1] = input[*i];
+			j++;
+			(*i)++;
+		}
+		full_token[j + 1] = '\0';
+		add_token(tokens, ft_strdup(full_token), EXIT, NO_QUOTE);
+		return;
+	}
+	
+	// Cas normal pour les variables d'environnement
 	if (j > 0)
 		add_token(tokens, ft_strdup(var_name), ENV, NO_QUOTE);
 }
