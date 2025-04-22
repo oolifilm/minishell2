@@ -6,7 +6,7 @@
 /*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 14:11:12 by leaugust          #+#    #+#             */
-/*   Updated: 2025/04/18 17:46:44 by jbanchon         ###   ########.fr       */
+/*   Updated: 2025/04/22 16:44:09 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,12 @@
 # include <string.h>
 # include <sys/wait.h>
 # include <unistd.h>
+
+# define ERR_GENERAL 1
+# define ERR_CMD_NOT_FOUND 127
+# define ERR_NOT_EXEC 126
+# define ERR_SYNTAX 2
+# define ERR_REDIR_FAIL 1
 
 /***********************************/
 /*==========TOKEN STRUCT==========*/
@@ -144,8 +150,7 @@ char				*ft_strtrim(const char *s1, const char *set);
 /******************************/
 /*==========PARSING==========*/
 /****************************/
-
-int					parse_tokens(t_token_list *tokens);
+int					parse_tokens(t_shell *sh, t_token_list *tokens);
 int					is_invalid_first_token(t_token *head);
 int					has_invalid_redirection(t_token *tokens);
 int					handle_pipes(t_token *tokens);
@@ -182,7 +187,7 @@ char				*get_env_value(char **env, const char *key);
 int					handle_path_error(char *shell, char *cmd);
 int					handle_path_error(char *shell, char *cmd);
 int					handle_execve_err(char *path, char **argv);
-int					handle_exit_status(int status, char *cmd);
+int					handle_exit_status(t_shell *sh, int status, char *cmd);
 void				print_exec_err(char *cmd);
 int					get_exec_err_code(void);
 

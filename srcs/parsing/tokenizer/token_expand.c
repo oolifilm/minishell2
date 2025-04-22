@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   token_expand.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: leaugust <leaugust@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/11 16:45:07 by jbanchon          #+#    #+#             */
-/*   Updated: 2025/04/18 19:42:46 by leaugust         ###   ########.fr       */
+/*   Updated: 2025/04/22 15:32:08 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,9 +58,7 @@ void	expand_token_list(t_shell *sh, t_token *token)
 					free(key);
 				}
 				else
-				{
 					value = ft_strdup("$");
-				}
 			}
 			old = token->input;
 			if (value)

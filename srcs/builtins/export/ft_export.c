@@ -6,7 +6,7 @@
 /*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/28 14:16:14 by jbanchon          #+#    #+#             */
-/*   Updated: 2025/04/18 13:16:16 by jbanchon         ###   ########.fr       */
+/*   Updated: 2025/04/22 13:55:39 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,11 @@ int	add_env(t_shell *sh, const char *var)
 		return (1);
 	}
 	new_env[env_count + 1] = NULL;
+	ft_putstr_fd("—> new_env[", 2);
+	ft_putnbr_fd(env_count, 2);
+	ft_putstr_fd("] = '", 2);
+	ft_putstr_fd(new_env[env_count], 2);
+	ft_putstr_fd("'\n", 2);
 	free_env_arr(sh->env);
 	sh->env = new_env;
 	return (0);
@@ -114,6 +119,9 @@ static int	process_var(t_shell *sh, const char *var)
 	var_len = equal_sign - var;
 	if (replace_var(sh, var, var_len) != -1)
 		return (0);
+	ft_putstr_fd("—> add_env va insérer : ", 2);
+	ft_putstr_fd((char *)var, 2);
+	ft_putstr_fd("\n", 2);
 	return (add_env(sh, var));
 }
 
@@ -185,6 +193,15 @@ int	ft_export(t_shell *sh, char **argv)
 	if (!argv[1])
 		return (print_sorted_env(sh));
 	i = 1;
+	ft_putstr_fd("—> ft_export arguments:\n", 2);
+	for (int j = 0; argv[j]; j++)
+	{
+		ft_putstr_fd("   argv[", 2);
+		ft_putnbr_fd(j, 2);
+		ft_putstr_fd("] = '", 2);
+		ft_putstr_fd(argv[j], 2);
+		ft_putstr_fd("'\n", 2);
+	}
 	while (argv[i])
 	{
 		if (!is_valid_key(argv[i]))

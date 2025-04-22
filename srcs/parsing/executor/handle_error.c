@@ -6,7 +6,7 @@
 /*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 14:29:56 by jbanchon          #+#    #+#             */
-/*   Updated: 2025/04/18 17:46:26 by jbanchon         ###   ########.fr       */
+/*   Updated: 2025/04/22 16:11:17 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,15 +50,17 @@ int	handle_path_error(char *shell, char *cmd)
 	return (127);
 }
 
-int	handle_exit_status(int status, char *cmd)
+int	handle_exit_status(t_shell *sh, int status, char *cmd)
 {
 	int	code;
 	int	sig;
 
 	(void)cmd;
+	code = 0;
 	if (WIFEXITED(status))
 	{
 		code = WEXITSTATUS(status);
+		set_exit_code(sh, code);
 		return (code);
 	}
 	else if (WIFSIGNALED(status))
@@ -68,7 +70,10 @@ int	handle_exit_status(int status, char *cmd)
 			ft_putstr_fd("\n", STDERR_FILENO);
 		else if (sig == SIGQUIT)
 			ft_putstr_fd("Quit: 3\n", STDERR_FILENO);
-		return (128 + sig);
+		code = 128 + sig;
+		set_exit_code(sh, code);
+		return (code);
 	}
+	set_exit_code(sh, code);
 	return (1);
 }

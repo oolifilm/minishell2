@@ -6,7 +6,7 @@
 /*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/11 22:25:24 by julien            #+#    #+#             */
-/*   Updated: 2025/04/18 17:23:37 by jbanchon         ###   ########.fr       */
+/*   Updated: 2025/04/22 16:06:00 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,9 +32,13 @@ char	*get_path(char *cmd)
 	while (path_split[i])
 	{
 		tmp = ft_strjoin(path_split[i], "/");
+		if (!tmp)
+			break ;
 		path_cmd = ft_strjoin(tmp, cmd);
 		free(tmp);
-		if (access(path_cmd, F_OK) == 0)
+		if (!path_cmd)
+			break ;
+		if (access(path_cmd, X_OK) == 0)
 			return (ft_free_split(path_split), path_cmd);
 		free(path_cmd);
 		i++;

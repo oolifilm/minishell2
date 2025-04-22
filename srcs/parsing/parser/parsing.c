@@ -6,7 +6,7 @@
 /*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/10 15:27:16 by leaugust          #+#    #+#             */
-/*   Updated: 2025/04/17 18:15:59 by jbanchon         ###   ########.fr       */
+/*   Updated: 2025/04/22 16:43:56 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,11 @@ int	is_invalid_first_token(t_token *head)
 	if (head->type == PIPE)
 	{
 		printf("[ERROR] Pipe can't be the first argument.\n");
+		return (1);
+	}
+	if (head->input && (head->input[0] == ';' || head->input[0] == '&'))
+	{
+		printf("[ERROR] ';' or '&' can't be the first argument.\n");
 		return (1);
 	}
 	return (0);
@@ -49,7 +54,8 @@ int	handle_pipes(t_token *tokens)
 				return (1);
 			}
 			if (tokens->next->type != CMD)
-				return(printf("[ERROR] Pipe must be followed by a command.\n"), 1);
+				return (printf("[ERROR] Pipe must be followed by a command.\n"),
+					1);
 		}
 		tokens = tokens->next;
 	}
@@ -110,15 +116,27 @@ int	has_unclosed_quote(char *input)
 	return (0);
 }
 
-int	parse_tokens(t_token_list *tokens)
+int	parse_tokens(t_shell *sh, t_token_list *tokens)
 {
 	if (!tokens || !tokens->head)
-		return (1);
+	{
+		set_exit_code(sh, 0);
+		return (0);
+	}
 	if (is_invalid_first_token(tokens->head))
+	{
+		set_exit_code(sh, 2);
 		return (0);
+	}
 	if (handle_pipes(tokens->head))
+	{
+		set_exit_code(sh, 2);
 		return (0);
+	}
 	if (has_invalid_redirection(tokens->head))
+	{
+		set_exit_code(sh, 2);
 		return (0);
+	}
 	return (1);
 }

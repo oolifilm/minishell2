@@ -6,7 +6,7 @@
 /*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/28 11:35:29 by julien            #+#    #+#             */
-/*   Updated: 2025/04/17 18:27:55 by jbanchon         ###   ########.fr       */
+/*   Updated: 2025/04/22 16:44:18 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,7 +118,7 @@ int	main(int argc, char **argv, char **envp)
 		add_history(input);
 		if (tokens_list && tokens_list->head)
 		{
-			if (!parse_tokens(tokens_list))
+			if (!parse_tokens(sh, tokens_list))
 			{
 				free_tokens(tokens_list);
 				free(input);

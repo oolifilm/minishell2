@@ -6,7 +6,7 @@
 /*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/11 21:30:28 by julien            #+#    #+#             */
-/*   Updated: 2025/04/18 17:51:39 by jbanchon         ###   ########.fr       */
+/*   Updated: 2025/04/22 16:12:39 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,12 +22,12 @@ int	exec_builtin_cmd(t_shell *sh, t_token *token, char *input)
 	ret = 0;
 	cmd = ft_strdup(token->input);
 	if (!cmd)
-		return (1);
+		return (set_exit_code(sh, 1), perror("minishell"), 1);
 	argv = build_argv(sh, token);
 	if (!argv)
 	{
 		free(cmd);
-		return (1);
+		return (set_exit_code(sh, 1), perror("minishell"), 1);
 	}
 	if (ft_strcmp(cmd, "echo") == 0)
 		ret = ft_echo(sh, argv);
@@ -57,7 +57,7 @@ int	exec_builtin_redirect(t_shell *sh, t_token *token, char *input)
 	status = 0;
 	pid = fork();
 	if (pid < 0)
-		return (perror("minishell"), 1);
+		return (set_exit_code(sh, 1), perror("minishell"), 1);
 	if (pid == 0)
 	{
 		redir_code = handle_redirect(token, input);
@@ -66,7 +66,7 @@ int	exec_builtin_redirect(t_shell *sh, t_token *token, char *input)
 		exit(exec_builtin_cmd(sh, token, input));
 	}
 	waitpid(pid, &status, 0);
-	return (handle_exit_status(status, token->input));
+	return (handle_exit_status(sh, status, token->input));
 }
 
 int	run_ext_child(t_shell *sh, t_token *token, char *path, char **argv)
@@ -77,8 +77,7 @@ int	run_ext_child(t_shell *sh, t_token *token, char *path, char **argv)
 	if (redir_code != 0)
 		exit(redir_code);
 	execve(path, argv, sh->env);
-	handle_execve_err(path, argv);
-	return (0);
+	exit(handle_execve_err(path, argv));
 }
 
 int	exec_ext_cmd(t_shell *sh, t_token *token, char **argv)
@@ -104,7 +103,7 @@ int	exec_ext_cmd(t_shell *sh, t_token *token, char **argv)
 		waitpid(pid, &status, 0);
 	free(path);
 	ft_free_split(argv);
-	exit_code = handle_exit_status(status, token->input);
+	exit_code = handle_exit_status(sh, status, token->input);
 	return (exit_code);
 }
 

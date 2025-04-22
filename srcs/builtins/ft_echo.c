@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_echo.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: leaugust <leaugust@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/28 14:14:58 by jbanchon          #+#    #+#             */
-/*   Updated: 2025/04/18 19:13:39 by leaugust         ###   ########.fr       */
+/*   Updated: 2025/04/22 14:12:05 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,9 +60,7 @@ int	ft_echo(t_shell *sh, char **argv)
 	while (argv[i])
 	{
 		if (ft_strcmp(argv[i], "$") == 0)
-		{
 			ft_putstr_fd("$", STDOUT_FILENO);
-		}
 		else if (argv[i][0] == '$')
 		{
 			if (ft_isalpha(argv[i][1]) || argv[i][1] == '_')
@@ -74,14 +72,10 @@ int	ft_echo(t_shell *sh, char **argv)
 					free(expanded_value);
 				}
 				else
-				{
 					ft_putstr_fd("$", STDOUT_FILENO);
-				}
 			}
 			else
-			{
 				ft_putstr_fd("$", STDOUT_FILENO);
-			}
 		}
 		else
 		{
@@ -89,9 +83,7 @@ int	ft_echo(t_shell *sh, char **argv)
 		}
 		if (argv[i + 1] && !(ft_strequ(argv[i], "[") || ft_strequ(argv[i + 1],
 					"]")) && !ft_strequ(argv[i + 1], "%"))
-		{
 			ft_putstr_fd(" ", STDOUT_FILENO);
-		}
 		i++;
 	}
 	if (newline)

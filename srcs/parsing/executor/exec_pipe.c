@@ -6,7 +6,7 @@
 /*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 11:48:46 by jbanchon          #+#    #+#             */
-/*   Updated: 2025/04/18 17:33:08 by jbanchon         ###   ########.fr       */
+/*   Updated: 2025/04/22 16:23:35 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ static pid_t	left_cmd(t_shell *sh, t_token *cmd, char *input, int fd[2])
 
 	pid = fork();
 	if (pid < 0)
-		return (perror("minishell"), -1);
+		return (perror("minishell"), set_exit_code(sh, 1), -1);
 	if (pid == 0)
 	{
 		close(fd[0]);
@@ -36,7 +36,7 @@ static pid_t	left_cmd(t_shell *sh, t_token *cmd, char *input, int fd[2])
 		}
 		close(fd[1]);
 		exec_cmd(sh, cmd, input);
-		exit(0);
+		exit(sh->last_exit_status);
 	}
 	return (pid);
 }
@@ -47,7 +47,7 @@ static pid_t	right_cmd(t_shell *sh, t_token *cmd, char *input, int fd[2])
 
 	pid = fork();
 	if (pid < 0)
-		return (perror("minishell"), -1);
+		return (perror("minishell"), set_exit_code(sh, 1), -1);
 	if (pid == 0)
 	{
 		close(fd[1]);
@@ -58,7 +58,7 @@ static pid_t	right_cmd(t_shell *sh, t_token *cmd, char *input, int fd[2])
 		}
 		close(fd[0]);
 		exec_cmd(sh, cmd, input);
-		exit(0);
+		exit(sh->last_exit_status);
 	}
 	return (pid);
 }
@@ -74,23 +74,24 @@ int	exec_pipe(t_shell *sh, t_token *token, char *input)
 	t_token	*tmp;
 	int		status_right;
 	int		exit_code;
+	int		dummy;
 
 	left_cmd_token = token;
 	pipe_token = token;
 	while (pipe_token && pipe_token->type != PIPE)
 		pipe_token = pipe_token->next;
 	if (!pipe_token)
-		return (1);
+		return (set_exit_code(sh, ERR_SYNTAX), 1);
 	cmd_right = get_next_cmd(pipe_token->next);
 	if (!cmd_right)
-		return (printf("[ERROR] No command after pipe.\n"), 1);
+		return (perror("minishell"), set_exit_code(sh, ERR_SYNTAX), 1);
 	tmp = token;
 	while (tmp && tmp->next != pipe_token)
 		tmp = tmp->next;
 	if (tmp)
 		tmp->next = NULL;
 	if (pipe(fd) < 0)
-		return (perror("minishell"), 1);
+		return (perror("minishell"), set_exit_code(sh, ERR_GENERAL), 1);
 	pid_left = left_cmd(sh, left_cmd_token, input, fd);
 	if (pid_left < 0)
 	{
@@ -107,10 +108,9 @@ int	exec_pipe(t_shell *sh, t_token *token, char *input)
 	}
 	close(fd[0]);
 	close(fd[1]);
-	int dummy;
 	waitpid(pid_left, &dummy, 0);
 	waitpid(pid_right, &status_right, 0);
-	exit_code = handle_exit_status(status_right, cmd_right->input);
+	exit_code = handle_exit_status(sh, status_right, cmd_right->input);
 	return (exit_code);
 }
 
