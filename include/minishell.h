@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: julien <julien@student.42.fr>              +#+  +:+       +#+        */
+/*   By: leaugust <leaugust@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 14:11:12 by leaugust          #+#    #+#             */
-/*   Updated: 2025/04/22 23:22:00 by julien           ###   ########.fr       */
+/*   Updated: 2025/04/23 15:55:34 by leaugust         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,19 +14,19 @@
 # define MINISHELL_H
 
 # include "../libft/libft.h"
+# include <errno.h>
+# include <fcntl.h>
+# include <readline/history.h>
+# include <readline/readline.h>
+# include <signal.h>
+# include <stdbool.h>
 # include <stdio.h>
 # include <stdlib.h>
-# include <unistd.h>
-# include <fcntl.h>
 # include <string.h>
-# include <errno.h>
-# include <signal.h>
-# include <sys/wait.h>
 # include <sys/stat.h>
-# include <readline/readline.h>
-# include <readline/history.h>
-# include <stdbool.h>
 # include <sys/types.h>
+# include <sys/wait.h>
+# include <unistd.h>
 
 # define ERR_GENERAL 1
 # define ERR_CMD_NOT_FOUND 127
@@ -99,10 +99,10 @@ typedef struct s_shell
 
 typedef struct s_expand_ctx
 {
-	char	*result;
-	int		result_len;
-	int		result_size;
-	char	*start;
+	char			*result;
+	int				result_len;
+	int				result_size;
+	char			*start;
 }					t_expand_ctx;
 
 /*
@@ -110,10 +110,10 @@ typedef struct s_expand_ctx
 */
 typedef struct s_quotes_ctx
 {
-	int		in_quotes;
-	char	quote_type;
-	char	*buffer;
-	int		*buffer_len;
+	int				in_quotes;
+	char			quote_type;
+	char			*buffer;
+	int				*buffer_len;
 }					t_quotes_ctx;
 
 /********************************/
@@ -125,11 +125,14 @@ typedef struct s_quotes_ctx
 int					get_env_var_name(char *input, int j, char *var_name);
 char				*expand_var_in_dquotes(char *str);
 int					cal_quoted_len(char *input, int j);
-void				copy_quoted_and_expand(char *input, char *result, int *j, int *len);
+void				copy_quoted_and_expand(char *input, char *result, int *j,
+						int *len);
 void				fill_quoted_content(char *input, char *result, int *i);
 void				process_question_mark(int *j, int *len, char *result);
-void				process_env_var(char *input, int *j, int *len, char *result);
-void				process_dquoted_dollar(char *input, int *j, int *len, char *result);
+void				process_env_var(char *input, int *j, int *len,
+						char *result);
+void				process_dquoted_dollar(char *input, int *j, int *len,
+						char *result);
 
 /*=====TOKEN_CMD=====*/
 
@@ -175,8 +178,10 @@ t_token_list		*init_token_list(void);
 void				expand_token_list(t_shell *sh, t_token *token);
 char				*expand_token(t_shell *sh, t_token *token);
 void				expand_double_quoted_vars(t_shell *sh, t_token *token);
-int					process_var_segment(t_shell *sh, char *s, int i, t_expand_ctx *ctx);
-void				copy_text_segment(char *start, char *end, char *result, int *result_len);
+int					process_var_segment(t_shell *sh, char *s, int i,
+						t_expand_ctx *ctx);
+void				copy_text_segment(char *start, char *end, char *result,
+						int *result_len);
 char				*ft_strtrim(const char *s1, const char *set);
 
 /* Fonctions de gestion des tokens - tokenizer_utils.c */
@@ -189,19 +194,22 @@ void				process_tokens(char *input, t_token_list *tokens, int *i,
 						int *is_first_word);
 
 /* Fonctions de gestion des tokens - tokenizer_buffer.c */
-void				add_token_from_buffer(t_token_list *tokens, char *buffer, int *buffer_len);
-int					handle_quotes_in_tokenizer(char *input, int *i, t_quotes_ctx *ctx);
+void				add_token_from_buffer(t_token_list *tokens, char *buffer,
+						int *buffer_len);
+int					handle_quotes_in_tokenizer(char *input, int *i,
+						t_quotes_ctx *ctx);
 
 /* Fonctions de gestion des caractères - tokenizer_chars.c */
-void				process_dollar_char(char *input, int *i, t_token_list *tokens,
+void				process_dollar_char(char *input, int *i,
+						t_token_list *tokens, char *buffer, int *buffer_len);
+void				process_pipe_char(char *input, int *i, t_token_list *tokens,
 						char *buffer, int *buffer_len);
-void				process_pipe_char(char *input, int *i, t_token_list *tokens, 
-						char *buffer, int *buffer_len);
-void				process_redir_char(char *input, int *i, t_token_list *tokens,
-						char *buffer, int *buffer_len);
-void				process_space_char(char *input, int *i, t_token_list *tokens,
-						char *buffer, int *buffer_len);
-void				process_normal_char(char *input, int *i, char *buffer, int *buffer_len);
+void				process_redir_char(char *input, int *i,
+						t_token_list *tokens, char *buffer, int *buffer_len);
+void				process_space_char(char *input, int *i,
+						t_token_list *tokens, char *buffer, int *buffer_len);
+void				process_normal_char(char *input, int *i, char *buffer,
+						int *buffer_len);
 
 /******************************/
 /*==========PARSING==========*/
@@ -259,11 +267,15 @@ int					handle_command(t_shell *sh, t_token_list *tokens);
 
 int					ft_echo(t_shell *sh, char **argv);
 int					is_echo_option_n(char *arg);
-void				handle_dollar_token(t_shell *sh, char *token, int is_with_token);
-void				process_token(t_shell *sh, char *token, t_token **cur_token_ptr);
-int					process_echo_args(t_shell *sh, char **argv, int i, int newline);
+void				handle_dollar_token(t_shell *sh, char *token,
+						int is_with_token);
+void				process_token(t_shell *sh, char *token,
+						t_token **cur_token_ptr);
+int					process_echo_args(t_shell *sh, char **argv, int i,
+						int newline);
 int					ft_strequ(const char *s1, const char *s2);
-void				process_token_with_info(t_shell *sh, char *token, t_token **cur_token_ptr);
+void				process_token_with_info(t_shell *sh, char *token,
+						t_token **cur_token_ptr);
 void				process_token_without_info(t_shell *sh, char *token);
 int					should_add_space(char **argv, int i);
 t_token				*find_first_valid_token(t_shell *sh, int i);

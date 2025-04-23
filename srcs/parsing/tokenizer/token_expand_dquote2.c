@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   token_expand_dquote2.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: julien <julien@student.42.fr>              +#+  +:+       +#+        */
+/*   By: leaugust <leaugust@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 23:22:53 by julien            #+#    #+#             */
-/*   Updated: 2025/04/22 23:22:53 by julien           ###   ########.fr       */
+/*   Updated: 2025/04/23 15:51:50 by leaugust         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,10 @@
 */
 void	expand_double_quoted_vars(t_shell *sh, t_token *token)
 {
-	char		*s;
-	char		*result;
+	char			*s;
+	char			*result;
 	t_expand_ctx	ctx;
-	int			i;
+	int				i;
 
 	s = token->input;
 	result = malloc(ft_strlen(s) * 4);

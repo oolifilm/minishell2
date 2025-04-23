@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   double_quoted_copy.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: julien <julien@student.42.fr>              +#+  +:+       +#+        */
+/*   By: leaugust <leaugust@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 23:42:15 by julien            #+#    #+#             */
-/*   Updated: 2025/04/22 23:42:15 by julien           ###   ########.fr       */
+/*   Updated: 2025/04/23 15:51:26 by leaugust         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,8 @@
 /*
 ** Traite un caractère normal (non-spécial) dans l'entrée
 */
-static void	process_dquoted_normal_char(char *input, char *result, int *j, int *len)
+static void	process_dquoted_normal_char(char *input, char *result, int *j,
+		int *len)
 {
 	result[(*len)++] = input[(*j)++];
 }
@@ -53,8 +54,8 @@ void	copy_quoted_and_expand(char *input, char *result, int *j, int *len)
 */
 void	fill_quoted_content(char *input, char *result, int *i)
 {
-	int		j;
-	int		len;
+	int	j;
+	int	len;
 
 	j = *i + 1;
 	len = 0;

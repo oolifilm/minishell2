@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   token_expand_dquote.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: julien <julien@student.42.fr>              +#+  +:+       +#+        */
+/*   By: leaugust <leaugust@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 23:18:02 by julien            #+#    #+#             */
-/*   Updated: 2025/04/22 23:49:53 by julien           ###   ########.fr       */
+/*   Updated: 2025/04/23 15:51:47 by leaugust         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,8 +60,7 @@ static int	expand_invalid_dollar(char *s, char *result, int *result_len, int i)
 	return (i);
 }
 
-void	copy_text_segment(char *start, char *end, char *result,
-		int *result_len)
+void	copy_text_segment(char *start, char *end, char *result, int *result_len)
 {
 	int	len_before;
 

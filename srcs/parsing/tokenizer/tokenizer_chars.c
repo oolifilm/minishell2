@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer_chars.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: julien <julien@student.42.fr>              +#+  +:+       +#+        */
+/*   By: leaugust <leaugust@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 23:28:15 by julien            #+#    #+#             */
-/*   Updated: 2025/04/23 01:10:17 by julien           ###   ########.fr       */
+/*   Updated: 2025/04/23 15:52:35 by leaugust         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,16 +18,16 @@
 void	process_dollar_char(char *input, int *i, t_token_list *tokens,
 		char *buffer, int *buffer_len)
 {
-	int		dollar_pos;
-	
+	int	dollar_pos;
+
 	dollar_pos = *i;
 	if (*buffer_len > 0)
 		add_token_from_buffer(tokens, buffer, buffer_len);
 	(*i)++;
 	if (input[*i] && (input[*i] == '?' || input[*i] == ':' || input[*i] == '='
-		|| !ft_isspace(input[*i])))
+			|| !ft_isspace(input[*i])))
 	{
-		while (input[*i] && !ft_isspace(input[*i]) && input[*i] != '|' 
+		while (input[*i] && !ft_isspace(input[*i]) && input[*i] != '|'
 			&& input[*i] != '<' && input[*i] != '>' && input[*i] != '$')
 			(*i)++;
 	}

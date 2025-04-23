@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_cmd.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: julien <julien@student.42.fr>              +#+  +:+       +#+        */
+/*   By: leaugust <leaugust@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/11 21:30:28 by julien            #+#    #+#             */
-/*   Updated: 2025/04/23 01:34:11 by julien           ###   ########.fr       */
+/*   Updated: 2025/04/23 15:50:34 by leaugust         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,13 +90,11 @@ int	exec_ext_cmd(t_shell *sh, t_token *token, char **argv)
 	status = 0;
 	if (!argv || !argv[0])
 		return (set_exit_code(sh, ERR_GENERAL), ERR_GENERAL);
-	
 	path = get_path(argv[0]);
 	if (!path)
 	{
 		ft_putstr_fd("minishell: ", STDERR_FILENO);
 		ft_putstr_fd(argv[0], STDERR_FILENO);
-		
 		if (errno == EACCES)
 		{
 			ft_putstr_fd(": Permission denied\n", STDERR_FILENO);
@@ -110,10 +108,10 @@ int	exec_ext_cmd(t_shell *sh, t_token *token, char **argv)
 			return (set_exit_code(sh, ERR_CMD_NOT_FOUND), ERR_CMD_NOT_FOUND);
 		}
 	}
-	
 	pid = fork();
 	if (pid < 0)
-		return (perror("minishell"), free(path), ft_free_split(argv), ERR_GENERAL);
+		return (perror("minishell"), free(path), ft_free_split(argv),
+			ERR_GENERAL);
 	if (pid == 0)
 		run_ext_child(sh, token, path, argv);
 	else
@@ -126,12 +124,13 @@ int	exec_ext_cmd(t_shell *sh, t_token *token, char **argv)
 
 void	exec_cmd(t_shell *sh, t_token *token, char *input)
 {
-	char	**argv;
-	int		ret;
+	char			**argv;
+	int				ret;
+	t_token_list	*tokens_list;
 
 	if (token->type != CMD)
 		return ;
-	t_token_list *tokens_list = init_token_list();
+	tokens_list = init_token_list();
 	if (!tokens_list)
 		return ;
 	tokens_list->head = token;
@@ -147,7 +146,7 @@ void	exec_cmd(t_shell *sh, t_token *token, char *input)
 			set_exit_code(sh, ERR_CMD_NOT_FOUND);
 			sh->current_tokens = NULL;
 			free(tokens_list);
-			return;
+			return ;
 		}
 	}
 	if (contains_pipe(token))
@@ -155,7 +154,6 @@ void	exec_cmd(t_shell *sh, t_token *token, char *input)
 	else
 	{
 		expand_token_list(sh, token);
-		
 		if (is_builtin(token->input))
 		{
 			if (has_redirect(token))
@@ -165,7 +163,8 @@ void	exec_cmd(t_shell *sh, t_token *token, char *input)
 		}
 		else
 		{
-			if (access(token->input, F_OK) == 0 && !ft_strchr(token->input, '/'))
+			if (access(token->input, F_OK) == 0 && !ft_strchr(token->input,
+					'/'))
 			{
 				ft_putstr_fd("minishell: ", STDERR_FILENO);
 				ft_putstr_fd(token->input, STDERR_FILENO);
@@ -174,14 +173,14 @@ void	exec_cmd(t_shell *sh, t_token *token, char *input)
 				set_exit_code(sh, ERR_CMD_NOT_FOUND);
 				sh->current_tokens = NULL;
 				free(tokens_list);
-				return;
+				return ;
 			}
 			argv = build_argv(sh, token);
 			if (!argv)
 			{
 				sh->current_tokens = NULL;
 				free(tokens_list);
-				return;
+				return ;
 			}
 			ret = exec_ext_cmd(sh, token, argv);
 		}

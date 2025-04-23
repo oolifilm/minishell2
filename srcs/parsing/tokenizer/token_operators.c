@@ -6,7 +6,7 @@
 /*   By: leaugust <leaugust@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 10:59:25 by julien            #+#    #+#             */
-/*   Updated: 2025/04/18 19:44:11 by leaugust         ###   ########.fr       */
+/*   Updated: 2025/04/23 15:52:13 by leaugust         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,54 +28,40 @@ void	assign_dollar(char *input, int *i, t_token_list *tokens)
 	int		j;
 	int		is_valid_var;
 
-	// Avancer au-delà du $
 	(*i)++;
-	
-	// Traitement de $? (statut de sortie) suivi potentiellement par d'autres caractères
 	if (input[*i] == '?')
 	{
 		j = 0;
 		token[j++] = '?';
 		(*i)++;
-		
-		// Capturer des caractères qui suivent $?, comme $ ou autres
-		while (input[*i] && !ft_isspace(input[*i]) && 
-			input[*i] != '|' && input[*i] != '<' && input[*i] != '>' && 
-			input[*i] != '\'' && input[*i] != '"')
+		while (input[*i] && !ft_isspace(input[*i]) && input[*i] != '|'
+			&& input[*i] != '<' && input[*i] != '>' && input[*i] != '\''
+			&& input[*i] != '"')
 		{
 			token[j++] = input[*i];
 			(*i)++;
 		}
 		token[j] = '\0';
-		
 		add_token(tokens, ft_strdup(token), EXIT, NO_QUOTE);
-		return;
+		return ;
 	}
-	
-	// Traitement de $$ (PID)
 	if (input[*i] == '$')
 	{
 		token[0] = '$';
 		(*i)++;
 		add_token(tokens, ft_strdup("$"), STRING, NO_QUOTE);
-		return;
+		return ;
 	}
-	
-	// Vérifier si le caractère après $ peut commencer un nom de variable
 	is_valid_var = (ft_isalpha(input[*i]) || input[*i] == '_');
-	
-	// Si pas valide, traiter comme un $ littéral suivi du caractère
 	if (!is_valid_var)
 	{
-		if (!input[*i] || ft_isspace(input[*i]) || 
-			input[*i] == '|' || input[*i] == '<' || input[*i] == '>')
+		if (!input[*i] || ft_isspace(input[*i]) || input[*i] == '|'
+			|| input[*i] == '<' || input[*i] == '>')
 		{
-			// Cas du $ seul
 			add_token(tokens, ft_strdup("$"), STRING, NO_QUOTE);
 		}
 		else
 		{
-			// Cas des caractères spéciaux ($:, $=, etc.)
 			j = 0;
 			token[j++] = '$';
 			token[j++] = input[*i];
@@ -83,10 +69,8 @@ void	assign_dollar(char *input, int *i, t_token_list *tokens)
 			(*i)++;
 			add_token(tokens, ft_strdup(token), STRING, NO_QUOTE);
 		}
-		return;
+		return ;
 	}
-	
-	// Cas d'une variable valide ($VAR)
 	j = 0;
 	while (input[*i] && (ft_isalnum(input[*i]) || input[*i] == '_') && j < 255)
 	{
@@ -94,7 +78,6 @@ void	assign_dollar(char *input, int *i, t_token_list *tokens)
 		(*i)++;
 	}
 	token[j] = '\0';
-	
 	if (j > 0)
 		add_token(tokens, ft_strdup(token), ENV, NO_QUOTE);
 	else

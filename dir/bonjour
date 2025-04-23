@@ -1,0 +1,18 @@
+total 92
+drwxr-xr-x  8 leaugust 2024_paris   227 Apr 22 13:47 .
+drwxr-xr-x 13 leaugust 2024_paris   193 Apr 18 19:11 ..
+-rw-r--r--  1 leaugust 2024_paris     0 Apr 22 13:47 a
+-rw-r--r--  1 leaugust 2024_paris     0 Apr 22 13:47 b
+-rw-r--r--  1 leaugust 2024_paris     5 Apr 22 13:47 c
+drwxr-xr-x  2 leaugust 2024_paris    21 Apr 22 13:48 dir
+drwxr-xr-x  8 leaugust 2024_paris   220 Apr 22 12:39 .git
+drwxr-xr-x  2 leaugust 2024_paris    25 Apr 22 12:39 include
+drwxr-xr-x  2 leaugust 2024_paris  4096 Apr 22 13:17 libft
+-rw-r--r--  1 leaugust 2024_paris  2948 Apr 22 12:39 Makefile
+-rwxr-xr-x  1 leaugust 2024_paris 56240 Apr 22 13:17 minishell
+drwxr-xr-x  6 leaugust 2024_paris   295 Apr 22 12:40 minishell_tester
+-rw-r--r--  1 leaugust 2024_paris    53 Apr 18 19:11 README.md
+drwxr-xr-x  4 leaugust 2024_paris   110 Apr 22 13:45 srcs
+-rw-r--r--  1 leaugust 2024_paris  6916 Apr 18 19:11 subject.txt
+-rw-r--r--  1 leaugust 2024_paris  4459 Apr 18 19:11 to_do.txt
+-rw-r--r--  1 leaugust 2024_paris   158 Apr 18 19:11 valgrind.supp

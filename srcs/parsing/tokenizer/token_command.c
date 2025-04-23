@@ -6,7 +6,7 @@
 /*   By: leaugust <leaugust@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 11:02:26 by julien            #+#    #+#             */
-/*   Updated: 2025/04/17 18:34:16 by leaugust         ###   ########.fr       */
+/*   Updated: 2025/04/23 15:51:44 by leaugust         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,14 +82,12 @@ void	assign_env_var(char *input, int *i, t_token_list *tokens)
 		}
 	}
 	var_name[j] = '\0';
-	
 	// Si on a juste $? sans texte après, on crée un token simple
 	if (is_exit_status && !input[*i])
 	{
 		add_token(tokens, ft_strdup("?"), EXIT, NO_QUOTE);
-		return;
+		return ;
 	}
-	
 	// Si on a $? suivi de texte, on crée un token combiné
 	if (is_exit_status)
 	{
@@ -104,9 +102,8 @@ void	assign_env_var(char *input, int *i, t_token_list *tokens)
 		}
 		full_token[j + 1] = '\0';
 		add_token(tokens, ft_strdup(full_token), EXIT, NO_QUOTE);
-		return;
+		return ;
 	}
-	
 	// Cas normal pour les variables d'environnement
 	if (j > 0)
 		add_token(tokens, ft_strdup(var_name), ENV, NO_QUOTE);

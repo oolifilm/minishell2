@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer_process.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: julien <julien@student.42.fr>              +#+  +:+       +#+        */
+/*   By: leaugust <leaugust@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 23:32:15 by julien            #+#    #+#             */
-/*   Updated: 2025/04/22 23:32:15 by julien           ###   ########.fr       */
+/*   Updated: 2025/04/23 15:52:38 by leaugust         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,8 +61,7 @@ void	process_tokens(char *input, t_token_list *tokens, int *i,
 	(void)is_first_word;
 	init_process_vars(input, &len, &buffer_len, &quotes_ctx, buffer);
 	while (*i < (int)len)
-		process_single_char(input, i, tokens, buffer, &buffer_len,
-			&quotes_ctx);
+		process_single_char(input, i, tokens, buffer, &buffer_len, &quotes_ctx);
 	if (buffer_len > 0)
 		add_token_from_buffer(tokens, buffer, &buffer_len);
 }

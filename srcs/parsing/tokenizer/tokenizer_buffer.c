@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer_buffer.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: julien <julien@student.42.fr>              +#+  +:+       +#+        */
+/*   By: leaugust <leaugust@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 23:27:32 by julien            #+#    #+#             */
-/*   Updated: 2025/04/22 23:27:32 by julien           ###   ########.fr       */
+/*   Updated: 2025/04/23 15:52:29 by leaugust         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,11 +20,11 @@ static t_quote_state	determine_quote_state(char *buffer)
 	t_quote_state	state;
 
 	state = NO_QUOTE;
-	if (ft_strchr(buffer, '\'') == buffer && 
-		ft_strrchr(buffer, '\'') == buffer + ft_strlen(buffer) - 1)
+	if (ft_strchr(buffer, '\'') == buffer && ft_strrchr(buffer, '\'') == buffer
+		+ ft_strlen(buffer) - 1)
 		state = SINGLE_QUOTE;
-	else if (ft_strchr(buffer, '"') == buffer && 
-		ft_strrchr(buffer, '"') == buffer + ft_strlen(buffer) - 1)
+	else if (ft_strchr(buffer, '"') == buffer && ft_strrchr(buffer,
+			'"') == buffer + ft_strlen(buffer) - 1)
 		state = DOUBLE_QUOTE;
 	return (state);
 }
@@ -32,7 +32,8 @@ static t_quote_state	determine_quote_state(char *buffer)
 /*
 ** Ajoute un token à partir du contenu du buffer
 */
-void	add_token_from_buffer(t_token_list *tokens, char *buffer, int *buffer_len)
+void	add_token_from_buffer(t_token_list *tokens, char *buffer,
+		int *buffer_len)
 {
 	char			*processed;
 	t_quote_state	current_quote_state;

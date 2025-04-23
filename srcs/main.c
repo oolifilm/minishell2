@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: julien <julien@student.42.fr>              +#+  +:+       +#+        */
+/*   By: leaugust <leaugust@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/28 11:35:29 by julien            #+#    #+#             */
-/*   Updated: 2025/04/22 22:07:29 by julien           ###   ########.fr       */
+/*   Updated: 2025/04/23 15:49:40 by leaugust         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,12 +121,16 @@ int	main(int argc, char **argv, char **envp)
 			tmp = tokens_list->head;
 			while (tmp)
 			{
-				// printf("Type: %s, Value: %s\n", get_token_type_str(tmp->type),
-				// 	tmp->input);
+				// printf("Type: %s, Value: %s\n",
+				//	get_token_type_str(tmp->type),
+				//     tmp->input);
 				tmp = tmp->next;
 			}
-			tmp = tokens_list->head;
-			exec_cmd(sh, tmp, input);
+			if (parse_tokens(sh, tokens_list))
+			{
+				tmp = tokens_list->head;
+				exec_cmd(sh, tmp, input);
+			}
 		}
 		else
 		{

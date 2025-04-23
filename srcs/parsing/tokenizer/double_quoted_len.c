@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   double_quoted_len.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: julien <julien@student.42.fr>              +#+  +:+       +#+        */
+/*   By: leaugust <leaugust@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 23:41:35 by julien            #+#    #+#             */
-/*   Updated: 2025/04/22 23:42:25 by julien           ###   ########.fr       */
+/*   Updated: 2025/04/23 15:57:23 by leaugust         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ static int	calc_env_var_len(char *input, int *j)
 
 	var_len = 0;
 	len = 0;
-	while (input[*j] && (ft_isalnum(input[*j]) || input[*j] == '_') 
+	while (input[*j] && (ft_isalnum(input[*j]) || input[*j] == '_')
 		&& var_len < 255)
 	{
 		var_name[var_len++] = input[*j];
@@ -54,7 +54,8 @@ static int	calc_dollar_len(char *input, int *j)
 }
 
 /*
-** Calcule la longueur d'une chaîne entre guillemets en gérant les différents cas d'expansion
+** Calcule la longueur d'une chaîne entre guillemets en gérant 
+les différents cas d'expansion
 */
 static int	calc_quoted_expansion_len(char *input, int *j)
 {

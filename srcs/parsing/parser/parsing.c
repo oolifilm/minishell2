@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: julien <julien@student.42.fr>              +#+  +:+       +#+        */
+/*   By: leaugust <leaugust@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/10 15:27:16 by leaugust          #+#    #+#             */
-/*   Updated: 2025/04/22 23:35:00 by julien           ###   ########.fr       */
+/*   Updated: 2025/04/23 12:51:03 by leaugust         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,17 +14,26 @@
 
 int	is_invalid_first_token(t_token *head)
 {
-	if (!head)
-		return (printf("[ERROR] Token list is NULL.\n"), 1);
-	if (head->type == PIPE)
+	if (head->input && (head->input[0] == ';' || head->input[0] == '&'
+			|| head->input[0] == '(' || head->input[0] == ')'))
 	{
-		printf("[ERROR] Pipe can't be the first argument.\n");
+		printf("[ERROR] ;, & and () can't be the first argument.\n");
 		return (1);
 	}
-	if (head->input && (head->input[0] == ';' || head->input[0] == '&'))
+	if (head->type == PIPE)
 	{
-		printf("[ERROR] ';' or '&' can't be the first argument.\n");
+		printf("[ERROR] Pipe cannot be the first token.\n");
 		return (1);
+	}
+	if (head->type == REDIR_IN || head->type == REDIR_OUT
+		|| head->type == APPEND || head->type == HEREDOC)
+	{
+		if (!head->next || (head->next->type != STRING
+				&& head->next->type != REDIR_FILE && head->next->type != ENV))
+		{
+			printf("[ERROR] Redirection must be followed by a target.\n");
+			return (1);
+		}
 	}
 	return (0);
 }
@@ -110,10 +119,7 @@ int	has_unclosed_quote(char *input)
 		input++;
 	}
 	if (in_single_quote || in_double_quote)
-	{
-		printf("[ERROR] Lexer found an unclosed quote.\n");
 		return (1);
-	}
 	return (0);
 }
 

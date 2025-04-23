@@ -3,16 +3,18 @@
 /*                                                        :::      ::::::::   */
 /*   token_quotes.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: julien <julien@student.42.fr>              +#+  +:+       +#+        */
+/*   By: leaugust <leaugust@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 11:00:31 by julien            #+#    #+#             */
-/*   Updated: 2025/04/22 23:37:49 by julien           ###   ########.fr       */
+/*   Updated: 2025/04/23 15:58:00 by leaugust         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../../include/minishell.h"
 
-// Fonction pour supprimer les quotes externes tout en préservant les quotes imbriquées
+// Fonction pour supprimer les quotes externes tout en
+// préservant les quotes imbriquées
+
 char	*remove_quotes(const char *s)
 {
 	char	*res;
@@ -28,21 +30,19 @@ char	*remove_quotes(const char *s)
 		return (NULL);
 	while (s[i])
 	{
-		// Si on rencontre un guillemet externe (non imbriqué)
 		if ((s[i] == '"' || s[i] == '\'') && (quote == 0 || quote == s[i]))
 		{
 			if (quote == 0)
-				quote = s[i];  // On entre dans un bloc guillemet
+				quote = s[i];
 			else if (quote == s[i])
-				quote = 0;     // On sort du bloc guillemet
+				quote = 0;
 			i++;
 		}
-		// Si on rencontre un guillemet imbriqué, on le préserve
-		else if ((s[i] == '"' && quote == '\'') || (s[i] == '\'' && quote == '"'))
+		else if ((s[i] == '"' && quote == '\'') || (s[i] == '\''
+				&& quote == '"'))
 		{
-			res[j++] = s[i++];  // On copie le guillemet imbriqué
+			res[j++] = s[i++];
 		}
-		// Pour tous les autres caractères
 		else
 		{
 			res[j++] = s[i++];

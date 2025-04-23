@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   token_is_redir.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
+/*   By: leaugust <leaugust@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/28 23:09:13 by julien            #+#    #+#             */
-/*   Updated: 2025/04/17 18:12:43 by jbanchon         ###   ########.fr       */
+/*   Updated: 2025/04/23 15:51:55 by leaugust         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ static void	handle_output_redir(char *input, int *i, t_token_list *tokens)
 	temp[1] = '\0';
 	temp[2] = '\0';
 	if (input[*i + 1] && input[*i + 2] && input[*i + 1] == '>' && input[*i
-			+ 2] == '>')
+		+ 2] == '>')
 	{
 		printf("[ERROR] Redirection must be followed by a valid target.\n");
 		*i = ft_strlen(input);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_echo.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: julien <julien@student.42.fr>              +#+  +:+       +#+        */
+/*   By: leaugust <leaugust@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/11 21:28:18 by julien            #+#    #+#             */
-/*   Updated: 2025/04/23 01:05:46 by julien           ###   ########.fr       */
+/*   Updated: 2025/04/23 15:54:57 by leaugust         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ int	is_echo_option_n(char *arg)
 void	handle_dollar_token(t_shell *sh, char *token, int is_with_token)
 {
 	char	*expanded_value;
+	char	*exit_status;
 
 	if (ft_isalpha(token[1]) || token[1] == '_')
 	{
@@ -47,9 +48,9 @@ void	handle_dollar_token(t_shell *sh, char *token, int is_with_token)
 		else if (!is_with_token)
 			ft_putstr_fd("$", STDOUT_FILENO);
 	}
-	else if (token[1] == '?') 
+	else if (token[1] == '?')
 	{
-		char *exit_status = ft_itoa(sh->last_exit_status);
+		exit_status = ft_itoa(sh->last_exit_status);
 		ft_putstr_fd(exit_status, STDOUT_FILENO);
 		free(exit_status);
 		if (token[2] != '\0')
@@ -71,13 +72,12 @@ void	process_token(t_shell *sh, char *token, t_token **cur_token_ptr)
 // Process arguments pour la commande echo
 int	process_echo_args(t_shell *sh, char **argv, int i, int newline)
 {
-	t_token *cur_token;
-	
+	t_token	*cur_token;
+
 	cur_token = find_first_valid_token(sh, i);
 	while (argv[i])
 	{
 		process_token(sh, argv[i], &cur_token);
-		
 		if (should_add_space(argv, i))
 			ft_putstr_fd(" ", STDOUT_FILENO);
 		i++;
@@ -90,9 +90,9 @@ int	process_echo_args(t_shell *sh, char **argv, int i, int newline)
 // La fonction principale echo
 int	ft_echo(t_shell *sh, char **argv)
 {
-	int		i;
-	int		newline;
-	
+	int	i;
+	int	newline;
+
 	i = 1;
 	newline = 1;
 	while (argv[i] && is_echo_option_n(argv[i]))

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   double_quoted_utils.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: julien <julien@student.42.fr>              +#+  +:+       +#+        */
+/*   By: leaugust <leaugust@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 23:41:03 by julien            #+#    #+#             */
-/*   Updated: 2025/04/22 23:42:38 by julien           ###   ########.fr       */
+/*   Updated: 2025/04/23 15:51:37 by leaugust         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ void	process_env_var(char *input, int *j, int *len, char *result)
 	int		var_len;
 
 	var_len = 0;
-	while (input[*j] && (ft_isalnum(input[*j]) || input[*j] == '_') 
+	while (input[*j] && (ft_isalnum(input[*j]) || input[*j] == '_')
 		&& var_len < 255)
 	{
 		var_name[var_len++] = input[*j];
