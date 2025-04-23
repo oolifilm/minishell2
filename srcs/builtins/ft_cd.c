@@ -104,8 +104,6 @@ int	ft_cd(t_shell *sh, char **argv)
 	is_dash = 0;
 	if (!argv[1])
 		path = get_home_dir(sh);
-	else if (argv[2])
-		return (ft_putstr_fd("cd: too many arguments\n", 2), 1);
 	else if (ft_strcmp(argv[1], "-") == 0)
 	{
 		path = get_oldpwd(sh);

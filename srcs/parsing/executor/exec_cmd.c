@@ -6,7 +6,7 @@
 /*   By: julien <julien@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/11 21:30:28 by julien            #+#    #+#             */
-/*   Updated: 2025/04/22 22:00:12 by julien           ###   ########.fr       */
+/*   Updated: 2025/04/23 01:34:11 by julien           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,20 +94,17 @@ int	exec_ext_cmd(t_shell *sh, t_token *token, char **argv)
 	path = get_path(argv[0]);
 	if (!path)
 	{
-		// La commande n'existe pas
 		ft_putstr_fd("minishell: ", STDERR_FILENO);
 		ft_putstr_fd(argv[0], STDERR_FILENO);
 		
 		if (errno == EACCES)
 		{
-			// Fichier existe mais n'est pas exécutable
 			ft_putstr_fd(": Permission denied\n", STDERR_FILENO);
 			ft_free_split(argv);
 			return (set_exit_code(sh, ERR_NOT_EXEC), ERR_NOT_EXEC);
 		}
 		else
 		{
-			// Commande non trouvée
 			ft_putstr_fd(": command not found\n", STDERR_FILENO);
 			ft_free_split(argv);
 			return (set_exit_code(sh, ERR_CMD_NOT_FOUND), ERR_CMD_NOT_FOUND);
@@ -134,19 +131,13 @@ void	exec_cmd(t_shell *sh, t_token *token, char *input)
 
 	if (token->type != CMD)
 		return ;
-	
-	// Sauvegarder la liste des tokens pour que ft_echo puisse y accéder
 	t_token_list *tokens_list = init_token_list();
 	if (!tokens_list)
 		return ;
 	tokens_list->head = token;
 	sh->current_tokens = tokens_list;
-	
-	// Toutes les commandes commençant par $ doivent être traitées comme des commandes non trouvées
-	// sauf si elles correspondent à des commandes internes
 	if (token->input[0] == '$')
 	{
-		// Vérifier si c'est une commande interne
 		if (!is_builtin(token->input))
 		{
 			ft_putstr_fd("minishell: ", STDERR_FILENO);
@@ -154,12 +145,11 @@ void	exec_cmd(t_shell *sh, t_token *token, char *input)
 			ft_putstr_fd(": command not found\n", STDERR_FILENO);
 			sh->last_exit_status = ERR_CMD_NOT_FOUND;
 			set_exit_code(sh, ERR_CMD_NOT_FOUND);
-			sh->current_tokens = NULL;  // Nettoyer
+			sh->current_tokens = NULL;
 			free(tokens_list);
 			return;
 		}
 	}
-
 	if (contains_pipe(token))
 		ret = exec_pipe(sh, token, input);
 	else
@@ -175,24 +165,21 @@ void	exec_cmd(t_shell *sh, t_token *token, char *input)
 		}
 		else
 		{
-			// Vérifier si la commande existe avant de créer argv
 			if (access(token->input, F_OK) == 0 && !ft_strchr(token->input, '/'))
 			{
-				// C'est un fichier local, pas une commande
 				ft_putstr_fd("minishell: ", STDERR_FILENO);
 				ft_putstr_fd(token->input, STDERR_FILENO);
 				ft_putstr_fd(": command not found\n", STDERR_FILENO);
 				sh->last_exit_status = ERR_CMD_NOT_FOUND;
 				set_exit_code(sh, ERR_CMD_NOT_FOUND);
-				sh->current_tokens = NULL;  // Nettoyer
+				sh->current_tokens = NULL;
 				free(tokens_list);
 				return;
 			}
-			
 			argv = build_argv(sh, token);
 			if (!argv)
 			{
-				sh->current_tokens = NULL;  // Nettoyer
+				sh->current_tokens = NULL;
 				free(tokens_list);
 				return;
 			}
@@ -201,8 +188,6 @@ void	exec_cmd(t_shell *sh, t_token *token, char *input)
 	}
 	sh->last_exit_status = ret;
 	set_exit_code(sh, ret);
-	
-	// Nettoyer la liste des tokens, mais pas les tokens eux-mêmes car ils sont gérés ailleurs
 	sh->current_tokens = NULL;
 	free(tokens_list);
 }

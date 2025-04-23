@@ -31,7 +31,7 @@
 # define ERR_GENERAL 1
 # define ERR_CMD_NOT_FOUND 127
 # define ERR_NOT_EXEC 126
-# define ERR_SYNTAX 2
+# define ERR_SYNTAX 1
 # define ERR_REDIR_FAIL 1
 # define ERR_SIGNAL_BASE 128
 

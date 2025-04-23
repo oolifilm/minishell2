@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_pipe.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
+/*   By: julien <julien@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 11:48:46 by jbanchon          #+#    #+#             */
-/*   Updated: 2025/04/22 16:23:35 by jbanchon         ###   ########.fr       */
+/*   Updated: 2025/04/23 02:05:01 by julien           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ static pid_t	right_cmd(t_shell *sh, t_token *cmd, char *input, int fd[2])
 
 	pid = fork();
 	if (pid < 0)
-		return (perror("minishell"), set_exit_code(sh, 1), -1);
+		return (set_exit_code(sh, 1), -1);
 	if (pid == 0)
 	{
 		close(fd[1]);
@@ -72,19 +72,19 @@ int	exec_pipe(t_shell *sh, t_token *token, char *input)
 	t_token	*left_cmd_token;
 	t_token	*pipe_token;
 	t_token	*tmp;
+	int		status_left;
 	int		status_right;
 	int		exit_code;
-	int		dummy;
 
 	left_cmd_token = token;
 	pipe_token = token;
 	while (pipe_token && pipe_token->type != PIPE)
 		pipe_token = pipe_token->next;
 	if (!pipe_token)
-		return (set_exit_code(sh, ERR_SYNTAX), 1);
+		return (set_exit_code(sh, ERR_GENERAL), 1);
 	cmd_right = get_next_cmd(pipe_token->next);
 	if (!cmd_right)
-		return (perror("minishell"), set_exit_code(sh, ERR_SYNTAX), 1);
+		return (perror("minishell"), set_exit_code(sh, ERR_GENERAL), 1);
 	tmp = token;
 	while (tmp && tmp->next != pipe_token)
 		tmp = tmp->next;
@@ -108,8 +108,16 @@ int	exec_pipe(t_shell *sh, t_token *token, char *input)
 	}
 	close(fd[0]);
 	close(fd[1]);
-	waitpid(pid_left, &dummy, 0);
+	waitpid(pid_left, &status_left, 0);
 	waitpid(pid_right, &status_right, 0);
+	if (WIFEXITED(status_right))
+	{
+		exit_code = WEXITSTATUS(status_right);
+		if (exit_code == 2)
+			exit_code = 1;
+		set_exit_code(sh, exit_code);
+		return (exit_code);
+	}
 	exit_code = handle_exit_status(sh, status_right, cmd_right->input);
 	return (exit_code);
 }
