@@ -56,6 +56,7 @@ static int	read_heredoc_lines(t_shell *sh, char *delimiter, int fd,
 		}
 		process_heredoc_line(sh, line, fd, should_expand);
 	}
+	close(fd);
 	return (fd);
 }
 

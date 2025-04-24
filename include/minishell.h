@@ -349,6 +349,7 @@ void				process_normal_char_legacy(t_token_ctx *ctx);
 
 /* Fonctions d'initialisation - main_utils.c */
 t_shell				*init_shell(char **envp);
+void				free_shell(t_shell *sh);
 char				**create_argv_from_input(t_token_list *tokens);
 
 /******************************/
