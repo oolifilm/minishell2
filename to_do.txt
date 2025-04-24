@@ -107,3 +107,32 @@ PROCHAINES PRIORITÉS :
 5. Vérifier la conformité POSIX pour toutes les fonctionnalités
 6. Tests exhaustifs et gestion des cas limites
 7. Correction des fuites mémoire
+
+
+implementation heredoc a moitie fait, reconnait le delimiteur en string apres un heredoc, mais fait pas stopper
+
+jai du modif le token apres un > < >> <<, ca mettait redirfile direct mais javais besoin que ca soit une string
+
+et pour le echo hola >>> bonjour, ca renvoyait lerreur mais la commande sexecutait en echo hola donc jai passe tous les handle en int cf. minishell.h au debut pour ce que jai modifie
+
+belek pour le heredoc, jai add fonction dans parsing.c et dans exec cmd pour les open file 
+
+cat ctrl \ doit quit core dumped
+
+unset PATH
+
+cd Desktop/minishell, le cd me prend en compte que le premier dossier
+
+cat | cat | ls  
+affiche bien ls mais pas de retour a la ligne
+
+minishell$> cat | cat | ls
+ file.txt   libft      minishell   srcs         'test\'      valgrind.supp
+ include    Makefile   README.md   subject.txt   to_do.txt
+^C
+
+minishell$> 
+minishell$> minishell$> 
+
+minishell$> minishell$> 
+

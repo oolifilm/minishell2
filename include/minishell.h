@@ -6,7 +6,7 @@
 /*   By: leaugust <leaugust@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 14:11:12 by leaugust          #+#    #+#             */
-/*   Updated: 2025/04/23 15:55:34 by leaugust         ###   ########.fr       */
+/*   Updated: 2025/04/24 12:56:07 by leaugust         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,7 @@ typedef struct s_token
 	t_token_type	type;
 	t_quote_state	quote_state;
 	struct s_token	*next;
+	int heredoc_fd;
 }					t_token;
 
 typedef struct s_token_list
@@ -120,6 +121,16 @@ typedef struct s_quotes_ctx
 /*==========TOKENIZER==========*/
 /******************************/
 
+int	handle_output_redir(char *input, int *i, t_token_list *tokens);
+int	assign_redirection(char *input, int *i, t_token_list *tokens);
+int handle_input_redir(char *input, int *i, t_token_list *tokens);
+int	process_redir_char(char *input, int *i, t_token_list *tokens, char *buffer,
+	int *buffer_len);
+	int	handle_heredocs(t_token *token);
+	int	open_heredoc_file(t_token *token);
+	int process_heredoc_input(char *delimiter);
+	
+
 /*=====DOUBLE_QUOTED=====*/
 
 int					get_env_var_name(char *input, int j, char *var_name);
@@ -142,8 +153,8 @@ void				assign_env_var(char *input, int *i, t_token_list *tokens);
 
 /*=====TOKEN__IS_REDIR=====*/
 
-void				assign_redirection(char *input, int *i,
-						t_token_list *tokens);
+//void				assign_redirection(char *input, int *i,
+//						t_token_list *tokens);
 
 /*=====TOKEN_OPERATORS=====*/
 
@@ -190,7 +201,7 @@ int					is_ignorable_input(const char *line);
 int					init_tokenizer(char *input, t_token_list **tokens, int *i);
 
 /* Fonctions de gestion des tokens - tokenizer_process.c */
-void				process_tokens(char *input, t_token_list *tokens, int *i,
+int				process_tokens(char *input, t_token_list *tokens, int *i,
 						int *is_first_word);
 
 /* Fonctions de gestion des tokens - tokenizer_buffer.c */
@@ -204,8 +215,8 @@ void				process_dollar_char(char *input, int *i,
 						t_token_list *tokens, char *buffer, int *buffer_len);
 void				process_pipe_char(char *input, int *i, t_token_list *tokens,
 						char *buffer, int *buffer_len);
-void				process_redir_char(char *input, int *i,
-						t_token_list *tokens, char *buffer, int *buffer_len);
+//void				process_redir_char(char *input, int *i,
+//						t_token_list *tokens, char *buffer, int *buffer_len);
 void				process_space_char(char *input, int *i,
 						t_token_list *tokens, char *buffer, int *buffer_len);
 void				process_normal_char(char *input, int *i, char *buffer,

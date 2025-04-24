@@ -6,7 +6,7 @@
 /*   By: leaugust <leaugust@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/28 11:35:29 by julien            #+#    #+#             */
-/*   Updated: 2025/04/23 15:49:40 by leaugust         ###   ########.fr       */
+/*   Updated: 2025/04/24 13:43:52 by leaugust         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,9 +121,8 @@ int	main(int argc, char **argv, char **envp)
 			tmp = tokens_list->head;
 			while (tmp)
 			{
-				// printf("Type: %s, Value: %s\n",
-				//	get_token_type_str(tmp->type),
-				//     tmp->input);
+				// printf("Type: %s, Value: %s\n", get_token_type_str(tmp->type),
+				// 	tmp->input);
 				tmp = tmp->next;
 			}
 			if (parse_tokens(sh, tokens_list))

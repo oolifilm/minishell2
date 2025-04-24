@@ -6,7 +6,7 @@
 /*   By: leaugust <leaugust@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 23:28:15 by julien            #+#    #+#             */
-/*   Updated: 2025/04/23 15:52:35 by leaugust         ###   ########.fr       */
+/*   Updated: 2025/04/24 12:28:18 by leaugust         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,12 +50,12 @@ void	process_pipe_char(char *input, int *i, t_token_list *tokens,
 /*
 ** Traite les caractères < et > dans le processus de tokenization
 */
-void	process_redir_char(char *input, int *i, t_token_list *tokens,
-		char *buffer, int *buffer_len)
+int	process_redir_char(char *input, int *i, t_token_list *tokens, char *buffer,
+		int *buffer_len)
 {
 	if (*buffer_len > 0)
 		add_token_from_buffer(tokens, buffer, buffer_len);
-	assign_redirection(input, i, tokens);
+	return (assign_redirection(input, i, tokens));
 }
 
 /*

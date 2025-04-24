@@ -3,15 +3,15 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+         #
+#    By: leaugust <leaugust@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/01/22 14:08:51 by leaugust          #+#    #+#              #
-#    Updated: 2025/04/18 14:35:13 by jbanchon         ###   ########.fr        #
+#    Updated: 2025/04/23 16:09:47 by leaugust         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME		=	minishell
-CC			=	cc
+CC			=	cc -g3
 CFLAGS		=	-Wall -Wextra -Werror -I/opt/homebrew/opt/readline/include
 LIBFTDIR 	=	libft
 LDFLAGS 	=	-lreadline -L$(LIBFTDIR) -lft -L/opt/homebrew/opt/readline/lib
