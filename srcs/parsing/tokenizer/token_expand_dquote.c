@@ -12,8 +12,8 @@
 
 #include "../../../include/minishell.h"
 
-static int	expand_exit_status(t_shell *sh, char *result, int *result_len,
-		int i)
+static int	expand_exit_status_dquote(t_shell *sh, char *result,
+		int *result_len, int i)
 {
 	char	*exit_code;
 
@@ -77,7 +77,7 @@ int	process_var_segment(t_shell *sh, char *s, int i, t_expand_ctx *ctx)
 	copy_text_segment(ctx->start, &s[i], ctx->result, &ctx->result_len);
 	i++;
 	if (s[i] == '?')
-		i = expand_exit_status(sh, ctx->result, &ctx->result_len, i);
+		i = expand_exit_status_dquote(sh, ctx->result, &ctx->result_len, i);
 	else if (ft_isalpha(s[i]) || s[i] == '_')
 		i += expand_env_var(sh, &s[i], ctx->result, &ctx->result_len);
 	else

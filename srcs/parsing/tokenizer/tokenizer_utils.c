@@ -6,7 +6,7 @@
 /*   By: julien <julien@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 23:31:34 by julien            #+#    #+#             */
-/*   Updated: 2025/04/22 23:31:34 by julien           ###   ########.fr       */
+/*   Updated: 2025/04/24 23:28:27 by julien           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,14 +15,12 @@
 /*
 ** Vérifie si un caractère doit être ignoré
 */
+
 int	is_ignored_char(char c)
 {
 	return (c == ' ' || c == '\t' || c == '\n' || c == ':' || c == '!');
 }
 
-/*
-** Vérifie si une ligne d'entrée est entièrement composée de caractères ignorables
-*/
 int	is_ignorable_input(const char *line)
 {
 	int	i;

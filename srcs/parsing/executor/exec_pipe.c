@@ -6,110 +6,70 @@
 /*   By: julien <julien@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 11:48:46 by jbanchon          #+#    #+#             */
-/*   Updated: 2025/04/23 02:05:01 by julien           ###   ########.fr       */
+/*   Updated: 2025/04/24 23:44:03 by julien           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../../include/minishell.h"
 
-static t_token	*get_next_cmd(t_token *token)
+/* Prototypes des fonctions déplacées dans exec_pipe_utils.c */
+t_token	*get_next_cmd(t_token *token);
+pid_t	left_cmd(t_shell *sh, t_token *cmd, char *input, int fd[2]);
+pid_t	right_cmd(t_shell *sh, t_token *cmd, char *input, int fd[2]);
+int		contains_pipe(t_token *token);
+
+static int	setup_pipe_commands(t_shell *sh, t_token *token, t_pipe_ctx *ctx)
 {
-	while (token && token->type != CMD)
-		token = token->next;
-	return (token);
-}
-
-static pid_t	left_cmd(t_shell *sh, t_token *cmd, char *input, int fd[2])
-{
-	pid_t	pid;
-
-	pid = fork();
-	if (pid < 0)
-		return (perror("minishell"), set_exit_code(sh, 1), -1);
-	if (pid == 0)
-	{
-		close(fd[0]);
-		if (dup2(fd[1], STDOUT_FILENO) < 0)
-		{
-			perror("minishell");
-			exit(1);
-		}
-		close(fd[1]);
-		exec_cmd(sh, cmd, input);
-		exit(sh->last_exit_status);
-	}
-	return (pid);
-}
-
-static pid_t	right_cmd(t_shell *sh, t_token *cmd, char *input, int fd[2])
-{
-	pid_t	pid;
-
-	pid = fork();
-	if (pid < 0)
-		return (set_exit_code(sh, 1), -1);
-	if (pid == 0)
-	{
-		close(fd[1]);
-		if (dup2(fd[0], STDIN_FILENO) < 0)
-		{
-			perror("minishell");
-			exit(1);
-		}
-		close(fd[0]);
-		exec_cmd(sh, cmd, input);
-		exit(sh->last_exit_status);
-	}
-	return (pid);
-}
-
-int	exec_pipe(t_shell *sh, t_token *token, char *input)
-{
-	int		fd[2];
-	pid_t	pid_left;
-	pid_t	pid_right;
-	t_token	*cmd_right;
-	t_token	*left_cmd_token;
-	t_token	*pipe_token;
 	t_token	*tmp;
-	int		status_left;
-	int		status_right;
-	int		exit_code;
 
-	left_cmd_token = token;
-	pipe_token = token;
-	while (pipe_token && pipe_token->type != PIPE)
-		pipe_token = pipe_token->next;
-	if (!pipe_token)
+	ctx->left_cmd = token;
+	ctx->pipe_token = token;
+	while (ctx->pipe_token && ctx->pipe_token->type != PIPE)
+		ctx->pipe_token = ctx->pipe_token->next;
+	if (!ctx->pipe_token)
 		return (set_exit_code(sh, ERR_GENERAL), 1);
-	cmd_right = get_next_cmd(pipe_token->next);
-	if (!cmd_right)
+	ctx->right_cmd = get_next_cmd(ctx->pipe_token->next);
+	if (!ctx->right_cmd)
 		return (perror("minishell"), set_exit_code(sh, ERR_GENERAL), 1);
 	tmp = token;
-	while (tmp && tmp->next != pipe_token)
+	while (tmp && tmp->next != ctx->pipe_token)
 		tmp = tmp->next;
 	if (tmp)
 		tmp->next = NULL;
-	if (pipe(fd) < 0)
+	return (0);
+}
+
+static int	execute_pipe_commands(t_shell *sh, t_pipe_ctx *ctx, char *input)
+{
+	if (pipe(ctx->fd) < 0)
 		return (perror("minishell"), set_exit_code(sh, ERR_GENERAL), 1);
-	pid_left = left_cmd(sh, left_cmd_token, input, fd);
-	if (pid_left < 0)
+	ctx->pid_left = left_cmd(sh, ctx->left_cmd, input, ctx->fd);
+	if (ctx->pid_left < 0)
 	{
-		close(fd[0]);
-		close(fd[1]);
+		close(ctx->fd[0]);
+		close(ctx->fd[1]);
 		return (1);
 	}
-	pid_right = right_cmd(sh, cmd_right, input, fd);
-	if (pid_right < 0)
+	ctx->pid_right = right_cmd(sh, ctx->right_cmd, input, ctx->fd);
+	if (ctx->pid_right < 0)
 	{
-		close(fd[0]);
-		close(fd[1]);
+		close(ctx->fd[0]);
+		close(ctx->fd[1]);
 		return (1);
 	}
-	close(fd[0]);
-	close(fd[1]);
-	waitpid(pid_left, &status_left, 0);
-	waitpid(pid_right, &status_right, 0);
+	close(ctx->fd[0]);
+	close(ctx->fd[1]);
+	return (0);
+}
+
+static int	wait_for_pipe_commands(t_shell *sh, t_pipe_ctx *ctx)
+{
+	int	status_left;
+	int	status_right;
+	int	exit_code;
+
+	waitpid(ctx->pid_left, &status_left, 0);
+	waitpid(ctx->pid_right, &status_right, 0);
 	if (WIFEXITED(status_right))
 	{
 		exit_code = WEXITSTATUS(status_right);
@@ -118,17 +78,20 @@ int	exec_pipe(t_shell *sh, t_token *token, char *input)
 		set_exit_code(sh, exit_code);
 		return (exit_code);
 	}
-	exit_code = handle_exit_status(sh, status_right, cmd_right->input);
+	exit_code = handle_exit_status(sh, status_right, ctx->right_cmd->input);
 	return (exit_code);
 }
 
-int	contains_pipe(t_token *token)
+int	exec_pipe(t_shell *sh, t_token *token, char *input)
 {
-	while (token)
-	{
-		if (token->type == PIPE)
-			return (1);
-		token = token->next;
-	}
-	return (0);
+	t_pipe_ctx	ctx;
+	int			ret;
+
+	ret = setup_pipe_commands(sh, token, &ctx);
+	if (ret != 0)
+		return (ret);
+	ret = execute_pipe_commands(sh, &ctx, input);
+	if (ret != 0)
+		return (ret);
+	return (wait_for_pipe_commands(sh, &ctx));
 }

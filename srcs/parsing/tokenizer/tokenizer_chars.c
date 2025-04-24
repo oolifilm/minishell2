@@ -6,74 +6,57 @@
 /*   By: leaugust <leaugust@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 23:28:15 by julien            #+#    #+#             */
-/*   Updated: 2025/04/24 12:28:18 by leaugust         ###   ########.fr       */
+/*   Updated: 2025/04/24 21:45:00 by julien           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../../include/minishell.h"
 
-/*
-** Traite le caractère $ dans le processus de tokenization
-*/
-void	process_dollar_char(char *input, int *i, t_token_list *tokens,
-		char *buffer, int *buffer_len)
+void	process_dollar_char_legacy(t_token_ctx *ctx)
 {
-	int	dollar_pos;
+	t_redir_ctx	redir_ctx;
 
-	dollar_pos = *i;
-	if (*buffer_len > 0)
-		add_token_from_buffer(tokens, buffer, buffer_len);
-	(*i)++;
-	if (input[*i] && (input[*i] == '?' || input[*i] == ':' || input[*i] == '='
-			|| !ft_isspace(input[*i])))
-	{
-		while (input[*i] && !ft_isspace(input[*i]) && input[*i] != '|'
-			&& input[*i] != '<' && input[*i] != '>' && input[*i] != '$')
-			(*i)++;
-	}
-	*i = dollar_pos;
-	assign_dollar(input, i, tokens);
+	redir_ctx.buffer = ctx->buffer;
+	redir_ctx.buffer_len = ctx->buffer_len;
+	redir_ctx.tokens = ctx->tokens;
+	process_dollar_char(ctx->input, ctx->i, &redir_ctx);
 }
 
-/*
-** Traite le caractère | dans le processus de tokenization
-*/
-void	process_pipe_char(char *input, int *i, t_token_list *tokens,
-		char *buffer, int *buffer_len)
+void	process_pipe_char_legacy(t_token_ctx *ctx)
 {
-	if (*buffer_len > 0)
-		add_token_from_buffer(tokens, buffer, buffer_len);
-	assign_pipe(input[*i], tokens);
-	(*i)++;
+	t_redir_ctx	redir_ctx;
+
+	redir_ctx.buffer = ctx->buffer;
+	redir_ctx.buffer_len = ctx->buffer_len;
+	redir_ctx.tokens = ctx->tokens;
+	process_pipe_char(ctx->input, ctx->i, &redir_ctx);
 }
 
-/*
-** Traite les caractères < et > dans le processus de tokenization
-*/
-int	process_redir_char(char *input, int *i, t_token_list *tokens, char *buffer,
-		int *buffer_len)
+int	process_redir_char_legacy(t_token_ctx *ctx)
 {
-	if (*buffer_len > 0)
-		add_token_from_buffer(tokens, buffer, buffer_len);
-	return (assign_redirection(input, i, tokens));
+	t_redir_ctx	redir_ctx;
+
+	redir_ctx.buffer = ctx->buffer;
+	redir_ctx.buffer_len = ctx->buffer_len;
+	redir_ctx.tokens = ctx->tokens;
+	return (process_redir_char(ctx->input, ctx->i, &redir_ctx));
 }
 
-/*
-** Traite les espaces dans le processus de tokenization
-*/
-void	process_space_char(char *input, int *i, t_token_list *tokens,
-		char *buffer, int *buffer_len)
+void	process_space_char_legacy(t_token_ctx *ctx)
 {
-	if (*buffer_len > 0)
-		add_token_from_buffer(tokens, buffer, buffer_len);
-	skip_spaces(input, i);
+	t_redir_ctx	redir_ctx;
+
+	redir_ctx.buffer = ctx->buffer;
+	redir_ctx.buffer_len = ctx->buffer_len;
+	redir_ctx.tokens = ctx->tokens;
+	process_space_char(ctx->input, ctx->i, &redir_ctx);
 }
 
-/*
-** Traite les caractères normaux dans le processus de tokenization
-*/
-void	process_normal_char(char *input, int *i, char *buffer, int *buffer_len)
+void	process_normal_char_legacy(t_token_ctx *ctx)
 {
-	buffer[(*buffer_len)++] = input[*i];
-	(*i)++;
+	t_buffer_ctx	buffer_ctx;
+
+	buffer_ctx.buffer = ctx->buffer;
+	buffer_ctx.buffer_len = ctx->buffer_len;
+	process_normal_char(ctx->input, ctx->i, &buffer_ctx);
 }

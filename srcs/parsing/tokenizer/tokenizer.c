@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: leaugust <leaugust@student.42.fr>          +#+  +:+       +#+        */
+/*   By: julien <julien@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 17:46:05 by jbanchon          #+#    #+#             */
-/*   Updated: 2025/04/24 12:39:09 by leaugust         ###   ########.fr       */
+/*   Updated: 2025/04/24 23:41:58 by julien           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,6 @@ t_token_list	*tokenize_input(char *input)
 		return (NULL);
 	if (!init_tokenizer(input, &tokens, &i))
 		return (NULL);
-	// ⚠️ ici : si process_tokens renvoie une erreur → on free et on stop
 	if (process_tokens(input, tokens, &i, &is_first_word))
 	{
 		free_tokens(tokens);

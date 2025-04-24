@@ -3,23 +3,21 @@
 /*                                                        :::      ::::::::   */
 /*   token_command.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: leaugust <leaugust@student.42.fr>          +#+  +:+       +#+        */
+/*   By: julien <julien@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 11:02:26 by julien            #+#    #+#             */
-/*   Updated: 2025/04/23 15:51:44 by leaugust         ###   ########.fr       */
+/*   Updated: 2025/04/24 23:31:28 by julien           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../../include/minishell.h"
 
-/* Détermine si un caractère est un caractère
-spécial dans l'analyse de la commande. */
-
-static bool	is_special_char(char c)
-{
-	return (c == ' ' || c == '\t' || c == '\n' || c == '$' || c == '>'
-		|| c == '<' || c == '\'' || c == '\"');
-}
+/* Prototypes des fonctions dans token_command_utils.c */
+bool	is_special_char(char c);
+void	process_exit_status_with_text(char *input, int *i,
+			t_token_list *tokens);
+void	process_variable_name(char *input, int *i, char *var_name, int *j);
+void	process_exit_status(char *input, int *i, t_token_list *tokens);
 
 /* Extrait un mot de l'entrée `input` et le
 classe en fonction de son rôle dans la commande. */
@@ -60,7 +58,6 @@ de l'entrée input lorsqu'un $ est rencontré. */
 void	assign_env_var(char *input, int *i, t_token_list *tokens)
 {
 	char	var_name[256];
-	char	full_token[1024];
 	int		j;
 	int		is_exit_status;
 
@@ -74,37 +71,12 @@ void	assign_env_var(char *input, int *i, t_token_list *tokens)
 		is_exit_status = 1;
 	}
 	else
-	{
-		while (input[*i] && (ft_isalnum(input[*i]) || input[*i] == '_'))
-		{
-			var_name[j++] = input[*i];
-			(*i)++;
-		}
-	}
-	var_name[j] = '\0';
-	// Si on a juste $? sans texte après, on crée un token simple
-	if (is_exit_status && !input[*i])
-	{
-		add_token(tokens, ft_strdup("?"), EXIT, NO_QUOTE);
-		return ;
-	}
-	// Si on a $? suivi de texte, on crée un token combiné
+		process_variable_name(input, i, var_name, &j);
 	if (is_exit_status)
 	{
-		// Capture le reste du mot jusqu'au prochain séparateur
-		j = 0;
-		ft_strlcpy(full_token, "?", sizeof(full_token));
-		while (input[*i] && !is_special_char(input[*i]))
-		{
-			full_token[j + 1] = input[*i];
-			j++;
-			(*i)++;
-		}
-		full_token[j + 1] = '\0';
-		add_token(tokens, ft_strdup(full_token), EXIT, NO_QUOTE);
+		process_exit_status(input, i, tokens);
 		return ;
 	}
-	// Cas normal pour les variables d'environnement
 	if (j > 0)
 		add_token(tokens, ft_strdup(var_name), ENV, NO_QUOTE);
 }

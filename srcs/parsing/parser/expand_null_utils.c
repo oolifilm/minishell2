@@ -1,29 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   exec_utils.c                                       :+:      :+:    :+:   */
+/*   expand_null_utils.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: julien <julien@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/11 21:30:30 by julien            #+#    #+#             */
-/*   Updated: 2025/04/25 00:38:34 by julien           ###   ########.fr       */
+/*   Created: 2025/04/25 00:05:00 by julien            #+#    #+#             */
+/*   Updated: 2025/04/25 00:05:00 by julien           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../../include/minishell.h"
 
-int	ft_free_split(char **tab)
+/* Gère le cas où l'entrée est NULL */
+char	*handle_null_input(t_shell *sh, char *line)
 {
-	int	i;
-
-	if (!tab)
-		return (0);
-	i = 0;
-	while (tab[i])
-	{
-		free(tab[i]);
-		i++;
-	}
-	free(tab);
-	return (0);
+	if (!sh)
+		return (NULL);
+	if (!line)
+		return (ft_strdup(""));
+	return (NULL);
 }

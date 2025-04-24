@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_export_print.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
+/*   By: julien <julien@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 11:22:45 by julien            #+#    #+#             */
-/*   Updated: 2025/04/15 17:39:44 by jbanchon         ###   ########.fr       */
+/*   Updated: 2025/04/24 22:45:08 by julien           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,49 +45,3 @@ void	print_env_var(char *var)
 		write(1, "\n", 1);
 	}
 }
-
-/* Cette fonction n'est plus utilisée car print_sorted_env est maintenant dans ft_export.c
-static char	**create_sorted_env(t_shell *sh)
-{
-	char	**sorted_env;
-	size_t	env_count;
-	size_t	i;
-
-	env_count = 0;
-	while (sh->env[env_count])
-		env_count++;
-	sorted_env = malloc(sizeof(char *) * (env_count + 1));
-	if (!sorted_env)
-		return (NULL);
-	i = 0;
-	while (i < env_count)
-	{
-		sorted_env[i] = sh->env[i];
-		i++;
-	}
-	sorted_env[env_count] = NULL;
-	qsort(sorted_env, env_count, sizeof(char *), compare_vars);
-	return (sorted_env);
-}
-*/
-
-/* Cette fonction est maintenant définie dans ft_export.c */
-/*
-int	print_sorted_env(t_shell *sh)
-{
-	char	**sorted_env;
-	size_t	i;
-
-	sorted_env = create_sorted_env(sh);
-	if (!sorted_env)
-		return (1);
-	i = 0;
-	while (sorted_env[i])
-	{
-		print_env_var(sorted_env[i]);
-		i++;
-	}
-	free(sorted_env);
-	return (0);
-}
-*/
