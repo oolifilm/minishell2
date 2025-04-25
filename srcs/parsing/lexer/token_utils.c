@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   token_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: leaugust <leaugust@student.42.fr>          +#+  +:+       +#+        */
+/*   By: julien <julien@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 10:57:49 by julien            #+#    #+#             */
-/*   Updated: 2025/04/24 13:44:07 by leaugust         ###   ########.fr       */
+/*   Updated: 2025/04/25 19:20:06 by julien           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,15 +18,23 @@
 t_token	*new_token(char *input, t_token_type type, t_quote_state quote_state)
 {
 	t_token	*token;
+		static char pipe_char[2] = "|";
 
 	token = malloc(sizeof(t_token));
 	if (!token)
 		return (NULL);
-	token->input = ft_strdup(input);
-	if (!token->input)
+	if (type == PIPE && input && input[0] == '|' && input[1] == '\0')
 	{
-		free(token);
-		return (NULL);
+		token->input = pipe_char;
+	}
+	else
+	{
+		token->input = ft_strdup(input);
+		if (!token->input)
+		{
+			free(token);
+			return (NULL);
+		}
 	}
 	token->type = type;
 	token->quote_state = quote_state;
@@ -79,7 +87,9 @@ void	free_tokens(t_token_list *tokens_list)
 	{
 		tmp = tokens;
 		tokens = tokens->next;
-		free(tmp->input);
+		if (tmp->type != PIPE || !tmp->input || tmp->input[0] != '|'
+			|| tmp->input[1] != '\0')
+			free(tmp->input);
 		free(tmp);
 	}
 	free(tokens_list);
