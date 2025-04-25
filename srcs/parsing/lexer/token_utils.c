@@ -6,7 +6,7 @@
 /*   By: julien <julien@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 10:57:49 by julien            #+#    #+#             */
-/*   Updated: 2025/04/25 19:24:25 by julien           ###   ########.fr       */
+/*   Updated: 2025/04/25 19:29:06 by julien           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,15 +18,13 @@
 t_token	*new_token(char *input, t_token_type type, t_quote_state quote_state)
 {
 	t_token	*token;
-		static char pipe_char[2] = "|";
+	static char	pipe_char[2] = "|";
 
 	token = malloc(sizeof(t_token));
 	if (!token)
 		return (NULL);
 	if (type == PIPE && input && input[0] == '|' && input[1] == '\0')
-	{
 		token->input = pipe_char;
-	}
 	else
 	{
 		token->input = ft_strdup(input);
