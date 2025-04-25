@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: julien <julien@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/28 11:35:29 by julien            #+#    #+#             */
-/*   Updated: 2025/04/25 01:19:28 by julien           ###   ########.fr       */
+/*   Updated: 2025/04/25 17:47:00 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ static void	process_input(t_shell *sh, char *input)
 	{
 		free_tokens(tokens_list);
 		handle_eof();
+		return ;
 	}
 	add_history(input);
 	if (tokens_list && tokens_list->head)
@@ -45,8 +46,8 @@ static void	process_input(t_shell *sh, char *input)
 		free(input);
 		return ;
 	}
-	free(input);
 	free_tokens(tokens_list);
+	free(input);
 }
 
 int	main(int argc, char **argv, char **envp)

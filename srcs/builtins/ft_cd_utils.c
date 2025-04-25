@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_cd_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: julien <julien@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 21:35:00 by julien            #+#    #+#             */
-/*   Updated: 2025/04/24 21:35:00 by julien           ###   ########.fr       */
+/*   Updated: 2025/04/25 18:38:15 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ int	update_pwd(t_shell *sh)
 	char	buffer[4096];
 	char	*old_pwd;
 	char	*cwd;
+	char	*new_pwd;
 
 	old_pwd = get_env_value(sh->env, "PWD");
 	if (!old_pwd)
@@ -52,8 +53,10 @@ int	update_pwd(t_shell *sh)
 	}
 	remove_env_var(sh, "OLDPWD");
 	add_env(sh, old_pwd);
+	new_pwd = ft_strjoin("PWD=", cwd);
 	remove_env_var(sh, "PWD");
-	add_env(sh, ft_strjoin("PWD=", cwd));
+	add_env(sh, new_pwd);
+	free(new_pwd);
 	free(old_pwd);
 	return (0);
 }
@@ -78,19 +81,27 @@ int	ft_cd(t_shell *sh, char **argv)
 {
 	char	*path;
 	int		is_dash;
+	int		ret;
+	int		flg;
 
 	is_dash = 0;
+	flg = 0;
+	path = argv[1];
 	if (!argv[1])
+	{
 		path = get_home_dir(sh);
-	else if (ft_strcmp(argv[1], "-") == 0)
+		flg = (path != NULL);
+	}
+	else if (ft_strcmp(path, "-") == 0)
 	{
 		path = get_oldpwd(sh);
-		if (path)
-			is_dash = 1;
+		is_dash = 1;
+		flg = 1;
 	}
-	else
-		path = argv[1];
 	if (!path)
 		return (1);
-	return (change_directory(sh, path, is_dash));
+	ret = change_directory(sh, path, is_dash);
+	if (flg)
+		free(path);
+	return (ret);
 }
