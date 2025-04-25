@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer_buffer.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: julien <julien@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 23:27:32 by julien            #+#    #+#             */
-/*   Updated: 2025/04/25 19:36:57 by julien           ###   ########.fr       */
+/*   Updated: 2025/04/25 19:48:55 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,8 @@ static t_quote_state	determine_quote_state(char *buffer)
 /*
 ** Crée un token à partir d'une chaîne traitée
 */
-static t_token	*create_token_from_processed(char *processed, t_quote_state state)
+static t_token	*create_token_from_processed(char *processed,
+		t_quote_state state)
 {
 	t_token	*token;
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   token_operators.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: julien <julien@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 10:59:25 by julien            #+#    #+#             */
-/*   Updated: 2025/04/25 19:34:45 by julien           ###   ########.fr       */
+/*   Updated: 2025/04/25 19:48:49 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,14 +16,14 @@
 
 void	assign_pipe(char input, t_token_list *tokens)
 {
-	t_token	*new;
+	t_token		*new;
 	static char	pipe_token[] = "|";
 
 	if (input == '|')
 	{
 		new = malloc(sizeof(t_token));
 		if (!new)
-			return;
+			return ;
 		new->input = pipe_token;
 		new->type = PIPE;
 		new->quote_state = NO_QUOTE;
