@@ -6,7 +6,7 @@
 /*   By: julien <julien@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 10:57:49 by julien            #+#    #+#             */
-/*   Updated: 2025/04/25 19:20:06 by julien           ###   ########.fr       */
+/*   Updated: 2025/04/25 19:24:25 by julien           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,8 +87,7 @@ void	free_tokens(t_token_list *tokens_list)
 	{
 		tmp = tokens;
 		tokens = tokens->next;
-		if (tmp->type != PIPE || !tmp->input || tmp->input[0] != '|'
-			|| tmp->input[1] != '\0')
+		if (!(tmp->type == PIPE && tmp->input && tmp->input[0] == '|' && tmp->input[1] == '\0'))
 			free(tmp->input);
 		free(tmp);
 	}

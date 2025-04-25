@@ -6,7 +6,7 @@
 /*   By: julien <julien@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 10:59:25 by julien            #+#    #+#             */
-/*   Updated: 2025/04/24 23:50:00 by julien           ###   ########.fr       */
+/*   Updated: 2025/04/25 19:24:51 by julien           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,30 @@
 
 void	assign_pipe(char input, t_token_list *tokens)
 {
+	t_token		*new;
+	static char	pipe_str[2] = "|";
+
 	if (input == '|')
-		add_token(tokens, "|", PIPE, NO_QUOTE);
+	{
+		new = malloc(sizeof(t_token));
+		if (!new)
+			return ;
+		new->input = pipe_str;
+		new->type = PIPE;
+		new->quote_state = NO_QUOTE;
+		new->next = NULL;
+		if (!tokens->head)
+		{
+			tokens->head = new;
+			tokens->cur = new;
+		}
+		else
+		{
+			tokens->cur->next = new;
+			tokens->cur = new;
+		}
+		tokens->size++;
+	}
 }
 
 /* Prototypes des fonctions dans token_operators_utils.c */
