@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer_buffer.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: leaugust <leaugust@student.42.fr>          +#+  +:+       +#+        */
+/*   By: julien <julien@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 23:27:32 by julien            #+#    #+#             */
-/*   Updated: 2025/04/23 15:52:29 by leaugust         ###   ########.fr       */
+/*   Updated: 2025/04/25 16:51:48 by julien           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,8 +42,11 @@ void	add_token_from_buffer(t_token_list *tokens, char *buffer,
 		return ;
 	buffer[*buffer_len] = '\0';
 	processed = remove_quotes(buffer);
+	if (!processed)
+		return ;
 	current_quote_state = determine_quote_state(buffer);
 	add_token(tokens, processed, STRING, current_quote_state);
+	free(processed);
 	*buffer_len = 0;
 }
 

@@ -44,6 +44,8 @@ char	*remove_quotes(const char *s)
 	int		i;
 	int		j;
 
+	if (!s)
+		return (NULL);
 	i = 0;
 	j = 0;
 	res = malloc(ft_strlen(s) + 1);
@@ -73,7 +75,6 @@ void	handle_single_quote(char *input, int *i, t_token_list *tokens)
 	char	buffer[1024];
 	int		len;
 	int		start;
-	char	*final_content;
 
 	len = 0;
 	(*i)++;
@@ -89,7 +90,6 @@ void	handle_single_quote(char *input, int *i, t_token_list *tokens)
 		buffer[len++] = '\'';
 		extract_after_squote(input, i, buffer, &len);
 		buffer[len] = '\0';
-		final_content = ft_strdup(buffer);
-		add_token(tokens, final_content, STRING, SINGLE_QUOTE);
+		add_token(tokens, buffer, STRING, SINGLE_QUOTE);
 	}
 }

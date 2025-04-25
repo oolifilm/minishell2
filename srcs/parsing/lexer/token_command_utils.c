@@ -38,7 +38,7 @@ void	process_exit_status_with_text(char *input, int *i, t_token_list *tokens)
 		(*i)++;
 	}
 	full_token[j + 1] = '\0';
-	add_token(tokens, ft_strdup(full_token), EXIT, NO_QUOTE);
+	add_token(tokens, full_token, EXIT, NO_QUOTE);
 }
 
 /* Extrait le nom d'une variable d'environnement */
@@ -59,7 +59,7 @@ void	process_exit_status(char *input, int *i, t_token_list *tokens)
 {
 	if (!input[*i])
 	{
-		add_token(tokens, ft_strdup("?"), EXIT, NO_QUOTE);
+		add_token(tokens, "?", EXIT, NO_QUOTE);
 		return ;
 	}
 	process_exit_status_with_text(input, i, tokens);

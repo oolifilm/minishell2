@@ -6,7 +6,7 @@
 /*   By: julien <julien@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 23:50:00 by julien            #+#    #+#             */
-/*   Updated: 2025/04/24 23:50:00 by julien           ###   ########.fr       */
+/*   Updated: 2025/04/25 16:54:04 by julien           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,19 +30,17 @@ static void	process_dquote_content(char *buffer, int len,
 	t_token_list *tokens)
 {
 	char	*final_content;
-	char	*token_content;
 
 	buffer[len] = '\0';
 	final_content = remove_quotes(buffer);
 	if (final_content)
 	{
-		token_content = final_content;
-		add_token(tokens, token_content, STRING, DOUBLE_QUOTE);
+		add_token(tokens, final_content, STRING, DOUBLE_QUOTE);
+		free(final_content);
 	}
 	else
 	{
-		token_content = ft_strdup(buffer);
-		add_token(tokens, token_content, STRING, DOUBLE_QUOTE);
+		add_token(tokens, buffer, STRING, DOUBLE_QUOTE);
 	}
 }
 

@@ -27,7 +27,6 @@ void	token_is_command(char *input, int *i, t_token_list *tokens,
 {
 	char	temp[256];
 	int		j;
-	char	*value;
 
 	j = 0;
 	while (input[*i] && !is_special_char(input[*i]) && j < 255)
@@ -35,20 +34,17 @@ void	token_is_command(char *input, int *i, t_token_list *tokens,
 	temp[j] = '\0';
 	if (j > 0)
 	{
-		value = ft_strdup(temp);
-		if (!value)
-			return ;
 		if (tokens->cur && tokens->cur->type == PIPE)
 			*is_first_word = 1;
 		if (*is_first_word)
 		{
-			add_token(tokens, value, CMD, NO_QUOTE);
+			add_token(tokens, temp, CMD, NO_QUOTE);
 			*is_first_word = 0;
 		}
 		else if (temp[0] == '-')
-			add_token(tokens, value, ARG, NO_QUOTE);
+			add_token(tokens, temp, ARG, NO_QUOTE);
 		else
-			add_token(tokens, value, STRING, NO_QUOTE);
+			add_token(tokens, temp, STRING, NO_QUOTE);
 	}
 }
 
@@ -78,5 +74,5 @@ void	assign_env_var(char *input, int *i, t_token_list *tokens)
 		return ;
 	}
 	if (j > 0)
-		add_token(tokens, ft_strdup(var_name), ENV, NO_QUOTE);
+		add_token(tokens, var_name, ENV, NO_QUOTE);
 }

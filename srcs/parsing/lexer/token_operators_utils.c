@@ -29,7 +29,7 @@ void	process_exit_status_token(char *input, int *i, t_token_list *tokens)
 		(*i)++;
 	}
 	token[j] = '\0';
-	add_token(tokens, ft_strdup(token), EXIT, NO_QUOTE);
+	add_token(tokens, token, EXIT, NO_QUOTE);
 }
 
 /* Traite le cas où $$ est rencontré */
@@ -37,7 +37,7 @@ void	process_double_dollar(char *input, int *i, t_token_list *tokens)
 {
 	(void)input;
 	(*i)++;
-	add_token(tokens, ft_strdup("$"), STRING, NO_QUOTE);
+	add_token(tokens, "$", STRING, NO_QUOTE);
 }
 
 /* Traite le cas où $ est suivi d'un caractère invalide */
@@ -49,7 +49,7 @@ void	process_invalid_dollar(char *input, int *i, t_token_list *tokens)
 	if (!input[*i] || ft_isspace(input[*i]) || input[*i] == '|'
 		|| input[*i] == '<' || input[*i] == '>')
 	{
-		add_token(tokens, ft_strdup("$"), STRING, NO_QUOTE);
+		add_token(tokens, "$", STRING, NO_QUOTE);
 	}
 	else
 	{
@@ -58,7 +58,7 @@ void	process_invalid_dollar(char *input, int *i, t_token_list *tokens)
 		token[j++] = input[*i];
 		token[j] = '\0';
 		(*i)++;
-		add_token(tokens, ft_strdup(token), STRING, NO_QUOTE);
+		add_token(tokens, token, STRING, NO_QUOTE);
 	}
 }
 
@@ -76,9 +76,9 @@ void	process_env_variable(char *input, int *i, t_token_list *tokens)
 	}
 	token[j] = '\0';
 	if (j > 0)
-		add_token(tokens, ft_strdup(token), ENV, NO_QUOTE);
+		add_token(tokens, token, ENV, NO_QUOTE);
 	else
-		add_token(tokens, ft_strdup("$"), STRING, NO_QUOTE);
+		add_token(tokens, "$", STRING, NO_QUOTE);
 }
 
 /* Extrait le nom d'une variable d'environnement à partir d'une chaîne input. */

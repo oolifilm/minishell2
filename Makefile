@@ -6,17 +6,13 @@
 #    By: julien <julien@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/01/22 14:08:51 by leaugust          #+#    #+#              #
-#    Updated: 2025/04/25 01:22:00 by julien           ###   ########.fr        #
+#    Updated: 2025/04/25 16:51:36 by julien           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME		=	minishell
 CC			=	cc -g3
 CFLAGS		=	-Wall -Wextra -Werror -I/opt/homebrew/opt/readline/include
-
-# Ajouter cette règle pour compiler avec Address Sanitizer
-asan:
-	@$(MAKE) CFLAGS="$(CFLAGS) -fsanitize=address -g" LDFLAGS="$(LDFLAGS) -fsanitize=address" re
 LIBFTDIR 	=	libft
 LDFLAGS 	=	-lreadline -L$(LIBFTDIR) -lft -L/opt/homebrew/opt/readline/lib
 
