@@ -6,7 +6,7 @@
 /*   By: julien <julien@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 23:27:32 by julien            #+#    #+#             */
-/*   Updated: 2025/04/25 16:51:48 by julien           ###   ########.fr       */
+/*   Updated: 2025/04/25 19:36:57 by julien           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,41 @@ static t_quote_state	determine_quote_state(char *buffer)
 }
 
 /*
+** Crée un token à partir d'une chaîne traitée
+*/
+static t_token	*create_token_from_processed(char *processed, t_quote_state state)
+{
+	t_token	*token;
+
+	token = malloc(sizeof(t_token));
+	if (!token)
+		return (NULL);
+	token->input = processed;
+	token->type = STRING;
+	token->quote_state = state;
+	token->next = NULL;
+	return (token);
+}
+
+/*
+** Ajoute un token à la liste de tokens
+*/
+static void	add_token_to_list(t_token_list *tokens, t_token *token)
+{
+	if (!tokens->head)
+	{
+		tokens->head = token;
+		tokens->cur = token;
+	}
+	else
+	{
+		tokens->cur->next = token;
+		tokens->cur = token;
+	}
+	tokens->size++;
+}
+
+/*
 ** Ajoute un token à partir du contenu du buffer
 */
 void	add_token_from_buffer(t_token_list *tokens, char *buffer,
@@ -37,6 +72,7 @@ void	add_token_from_buffer(t_token_list *tokens, char *buffer,
 {
 	char			*processed;
 	t_quote_state	current_quote_state;
+	t_token			*token;
 
 	if (*buffer_len <= 0)
 		return ;
@@ -45,8 +81,13 @@ void	add_token_from_buffer(t_token_list *tokens, char *buffer,
 	if (!processed)
 		return ;
 	current_quote_state = determine_quote_state(buffer);
-	add_token(tokens, processed, STRING, current_quote_state);
-	free(processed);
+	token = create_token_from_processed(processed, current_quote_state);
+	if (!token)
+	{
+		free(processed);
+		return ;
+	}
+	add_token_to_list(tokens, token);
 	*buffer_len = 0;
 }
 
